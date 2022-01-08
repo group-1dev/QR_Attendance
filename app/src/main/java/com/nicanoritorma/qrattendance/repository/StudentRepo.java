@@ -14,12 +14,12 @@ import com.nicanoritorma.qrattendance.api.PutData;
 import com.nicanoritorma.qrattendance.model.StudentModel;
 
 import java.util.List;
-public class OnlineStudentRepo {
+public class StudentRepo {
 
     private Application application;
     private GetStudentOnline studentList;
 
-    public OnlineStudentRepo(Application application) {
+    public StudentRepo(Application application) {
         this.application = application;
         studentList = new GetStudentOnline(application);
     }

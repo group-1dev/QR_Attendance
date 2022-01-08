@@ -2,24 +2,22 @@ package com.nicanoritorma.qrattendance.viewmodel;
 
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.nicanoritorma.qrattendance.model.StudentModel;
-import com.nicanoritorma.qrattendance.repository.OnlineStudentRepo;
+import com.nicanoritorma.qrattendance.repository.StudentRepo;
 
 import java.util.List;
 
 public class GeneratedQrViewModel extends AndroidViewModel {
 
-    private OnlineStudentRepo onlineStudentRepo;
+    private StudentRepo onlineStudentRepo;
 
     public GeneratedQrViewModel(Application application) {
         super(application);
-        onlineStudentRepo = new OnlineStudentRepo(application);
+        onlineStudentRepo = new StudentRepo(application);
     }
 
     public void insert(String fullname, String idNum, String dept, String qrCode) {
