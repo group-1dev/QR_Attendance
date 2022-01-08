@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModelProvider;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -17,8 +16,8 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.utils.Connectivity;
 import com.nicanoritorma.qrattendance.viewmodel.GeneratedQrViewModel;
-import com.nicanoritorma.qrattendance.viewmodel.OfflineStudentViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
@@ -43,6 +42,7 @@ public class CreateQr extends BaseActivity {
         initUI();
     }
 
+
     private void initUI() {
         ActionBar ab = getSupportActionBar();
         ab.setTitle("Create QR Code");
@@ -56,12 +56,11 @@ public class CreateQr extends BaseActivity {
     }
 
     private String[] getData() {
-        String ERROR = "Required field";
         String fullname = et_fullname.getText().toString().trim();
         String idNum = et_idNum.getText().toString().trim();
         String department = et_dept.getText().toString().trim();
 
-        return new String[]{fullname,idNum,department};
+        return new String[]{fullname, idNum, department};
     }
 
     private void genQr(String idNum) {
@@ -92,25 +91,20 @@ public class CreateQr extends BaseActivity {
     private void saveQr(String fullname, String idNum, String dept, Bitmap bitmap) {
 
         String SAVE_SUCCESS = "Successfully saved ";
-        boolean isConnected = isNetworkConnected();
+        String SAVE_ERROR = "Error occurred";
+        boolean isConnectedFast = Connectivity.isConnectedFast(getApplicationContext());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 99, bos);
         byte[] qr = bos.toByteArray();
         String qrCode = Base64.getEncoder().encodeToString(qr);
 
-        if (isConnected) //save to online db
+        if (isConnectedFast) //save to online db
         {
             GeneratedQrViewModel onlineViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
-            if (onlineViewModel.insert(fullname, idNum, dept, qrCode)) {
-                Toast.makeText(getApplicationContext(), SAVE_SUCCESS + "to online DB", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else //save to local db
-        {
-            OfflineStudentViewModel studentViewModel = new ViewModelProvider(this).get(OfflineStudentViewModel.class);;
-            studentViewModel.insert(new StudentModel(fullname, idNum, dept, qrCode));
-            Toast.makeText(getApplicationContext(), SAVE_SUCCESS + "to local DB", Toast.LENGTH_SHORT).show();
+            onlineViewModel.insert(fullname, idNum, dept, qrCode);
+        } else {
+            Toast.makeText(getApplicationContext(), SAVE_ERROR, Toast.LENGTH_SHORT).show();
         }
         et_fullname.setText("");
         et_idNum.setText("");

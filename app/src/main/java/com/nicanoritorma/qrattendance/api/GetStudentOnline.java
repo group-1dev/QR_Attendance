@@ -1,5 +1,7 @@
 package com.nicanoritorma.qrattendance.api;
 
+import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
+
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
@@ -24,11 +26,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GetStudentOnline extends BaseActivity {
+public class GetStudentOnline {
 
     private MutableLiveData<List<StudentModel>> studentList;
     private RequestQueueSingleton requestQueueSingleton;
-
 
     public GetStudentOnline(Application application) {
         studentList = new MutableLiveData<>();

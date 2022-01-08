@@ -1,7 +1,11 @@
 package com.nicanoritorma.qrattendance.repository;
 
+import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
+
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 
@@ -12,7 +16,7 @@ import com.nicanoritorma.qrattendance.model.StudentModel;
 
 import java.util.List;
 
-public class OnlineStudentRepo extends BaseActivity{
+public class OnlineStudentRepo {
 
     private static OnlineStudentRepo instance;
     private Application application;
@@ -24,16 +28,16 @@ public class OnlineStudentRepo extends BaseActivity{
         studentList = new GetStudentOnline(application);
     }
 
-    public boolean insert(StudentModel student)
+    public void insert(StudentModel student)
     {
-        InsertStudentToDb insertStudentToDb = (InsertStudentToDb) new InsertStudentToDb(student.getName(), student.getIdNum(), student.getCollege(), student.getQrCode()).execute();
-        return insertStudentToDb.doInBackground();
+        new InsertStudentToDb(student.getName(), student.getIdNum(), student.getCollege(), student.getQrCode()).execute();
     }
 
-    static class InsertStudentToDb extends AsyncTask<Void, Void, Boolean>
+    static class InsertStudentToDb extends AsyncTask<Void, Void, String>
     {
         String url = getDbUrl() + "AddQrToDb.php";
         String fullname, idNumber, dept, qrCode;
+        String result;
 
         public InsertStudentToDb(String fullname, String idNumber, String dept, String qrCode) {
             this.fullname = fullname;
@@ -43,7 +47,7 @@ public class OnlineStudentRepo extends BaseActivity{
         }
 
         @Override
-        protected Boolean doInBackground(Void... voids) {
+        protected String doInBackground(Void... voids) {
             String[] field = new String[4];
             field[0] = "fullname";
             field[1] = "idNumber";
@@ -60,10 +64,9 @@ public class OnlineStudentRepo extends BaseActivity{
             PutData putData = new PutData(url, "POST", field, data);
             if (putData.startPut()) {
                 if (putData.onComplete()) {
-                    String result = putData.getResult();
-                    if (result.equals("Success"))
+                    if (putData.getResult().equals("Success"))
                     {
-                        return true;
+                        result = "Success";
                     }
                 }
             }

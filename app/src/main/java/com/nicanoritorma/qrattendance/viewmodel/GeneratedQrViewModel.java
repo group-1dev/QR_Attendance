@@ -22,8 +22,8 @@ public class GeneratedQrViewModel extends AndroidViewModel {
         onlineStudentRepo = new OnlineStudentRepo(application);
     }
 
-    public boolean insert(String fullname, String idNum, String dept, String qrCode) {
-        return onlineStudentRepo.insert(new StudentModel(fullname, idNum, dept, qrCode));
+    public void insert(String fullname, String idNum, String dept, String qrCode) {
+        onlineStudentRepo.insert(new StudentModel(fullname, idNum, dept, qrCode));
     }
 
     public LiveData<List<StudentModel>> getStudentList() {

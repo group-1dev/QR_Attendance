@@ -2,11 +2,31 @@ package com.nicanoritorma.qrattendance;
 
 import android.animation.LayoutTransition;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.AutoTransition;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.GridLayout;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import androidx.cardview.widget.CardView;
+
+import org.xml.sax.XMLReader;
+
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 public class MainActivity extends BaseActivity {
 
@@ -19,6 +39,7 @@ public class MainActivity extends BaseActivity {
 
         drop_down = findViewById(R.id.drop_down_gridView);
         drop_down.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
+        testConnect();
     }
 
     public void expandDropDown(View view) {
