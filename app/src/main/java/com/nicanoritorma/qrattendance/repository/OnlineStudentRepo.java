@@ -4,9 +4,11 @@ import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 
+import com.nicanoritorma.qrattendance.BaseActivity;
 import com.nicanoritorma.qrattendance.api.GetStudentOnline;
 import com.nicanoritorma.qrattendance.api.PutData;
 import com.nicanoritorma.qrattendance.model.StudentModel;
@@ -14,7 +16,6 @@ import com.nicanoritorma.qrattendance.model.StudentModel;
 import java.util.List;
 public class OnlineStudentRepo {
 
-    private static OnlineStudentRepo instance;
     private Application application;
     private GetStudentOnline studentList;
 
@@ -24,19 +25,26 @@ public class OnlineStudentRepo {
     }
 
     public void insert(StudentModel student) {
-        new InsertStudentToDb(student.getName(), student.getIdNum(), student.getCollege(), student.getQrCode()).execute();
+        new InsertStudentToDb(application, student.getName(), student.getIdNum(), student.getCollege(), student.getQrCode()).execute();
     }
 
     static class InsertStudentToDb extends AsyncTask<Void, Void, Void> {
         String url = getDbUrl() + "AddQrToDb.php";
         String fullname, idNumber, dept, qrCode;
         String result;
+        Application application;
 
-        public InsertStudentToDb(String fullname, String idNumber, String dept, String qrCode) {
+        public InsertStudentToDb(Application application, String fullname, String idNumber, String dept, String qrCode) {
+            this.application = application;
             this.fullname = fullname;
             this.idNumber = idNumber;
             this.dept = dept;
             this.qrCode = qrCode;
+        }
+
+        @Override
+        protected void onPreExecute() {
+
         }
 
         @Override
@@ -55,14 +63,26 @@ public class OnlineStudentRepo {
 
             //TODO: change URL address
             PutData putData = new PutData(url, "POST", field, data);
+            String putDataResult;
+
             if (putData.startPut()) {
                 if (putData.onComplete()) {
-                    if (putData.getResult().equals("Success")) {
-                        result = "Success";
+                    putDataResult = putData.getResult();
+                    if (putDataResult.equals("Success")) {
+                        result = "QR Successfully saved";
+                    }
+                    else if (putDataResult.equals("Error adding student, try again later."))
+                    {
+                        result = putDataResult;
                     }
                 }
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void unused) {
+            Toast.makeText(application, result, Toast.LENGTH_SHORT).show();
         }
     }
 

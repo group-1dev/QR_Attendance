@@ -4,19 +4,22 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import java.io.IOException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
     private CardView progressBar;
-
     @Override
     public void setContentView(int layoutResID) {
         ConstraintLayout constraintLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
@@ -24,6 +27,12 @@ public abstract class BaseActivity extends AppCompatActivity {
         FrameLayout frameLayout = constraintLayout.findViewById(R.id.frame_layout);
         getLayoutInflater().inflate(layoutResID, frameLayout, true);
         super.setContentView(constraintLayout);
+    }
+
+    public static String getDbUrl()
+    {
+        //TODO: change database address on production
+        return "http://192.168.8.100/qr_atten_sys/";
     }
 
     public void testConnect()
@@ -34,7 +43,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     class testConnect extends AsyncTask<Void, Void, Integer> {
 
         String urlString = "";
-        int result;
+        String result;
         HttpURLConnection urlConnection = null;
         public testConnect(String url) {
             this.urlString = url;
@@ -50,8 +59,12 @@ public abstract class BaseActivity extends AppCompatActivity {
             try {
                 URL url = new URL(urlString);
                 urlConnection = (HttpURLConnection) url.openConnection();
-                result = urlConnection.getResponseCode();
-            } catch (Exception e) {
+                result = urlConnection.getResponseMessage();
+            } catch (ConnectException e)
+            {
+                result = "Failed to connect error (E01)";
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -60,13 +73,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Integer integer) {
             urlConnection.disconnect();
+            if (!result.equals("OK"))
+            {
+                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+            }
             progressBar.setVisibility(View.GONE);
         }
-    }
-
-    public static String getDbUrl()
-    {
-        //TODO: change database address on production
-        return "http://192.168.8.100/qr_atten_sys/";
     }
 }
