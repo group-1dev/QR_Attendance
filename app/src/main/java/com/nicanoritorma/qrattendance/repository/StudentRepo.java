@@ -43,11 +43,6 @@ public class StudentRepo {
         }
 
         @Override
-        protected void onPreExecute() {
-
-        }
-
-        @Override
         protected Void doInBackground(Void... voids) {
             String[] field = new String[4];
             field[0] = "fullname";

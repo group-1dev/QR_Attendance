@@ -55,6 +55,7 @@ public class CreateQr extends BaseActivity {
 
     }
 
+    //get data from edittexts
     private String[] getData() {
         String fullname = et_fullname.getText().toString().trim();
         String idNum = et_idNum.getText().toString().trim();
@@ -63,6 +64,7 @@ public class CreateQr extends BaseActivity {
         return new String[]{fullname, idNum, department};
     }
 
+    //generate qr code
     private void genQr(String idNum) {
         BitMatrix bitMatrix;
         Bitmap bitmap;
@@ -89,8 +91,6 @@ public class CreateQr extends BaseActivity {
 
     //save qr to local db if no internet or to online db if internet is available
     private void saveQr(String fullname, String idNum, String dept, Bitmap bitmap) {
-
-        String SAVE_SUCCESS = "Successfully saved ";
         String SAVE_ERROR = "Error occurred";
         boolean isConnectedFast = Connectivity.isConnectedFast(getApplicationContext());
 
