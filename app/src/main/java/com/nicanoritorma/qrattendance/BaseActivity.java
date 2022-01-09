@@ -32,7 +32,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static String getDbUrl()
     {
         //TODO: change database address on production
-        return "http://192.168.8.100/qr_atten_sys/";
+        return "http://192.168.8.101/qr_atten_sys/";
     }
 
     public void testConnect()

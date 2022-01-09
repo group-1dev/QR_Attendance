@@ -4,6 +4,8 @@ import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -58,18 +60,10 @@ public class StudentRepo {
 
             //TODO: change URL address
             PutData putData = new PutData(url, "POST", field, data);
-            String putDataResult;
 
             if (putData.startPut()) {
                 if (putData.onComplete()) {
-                    putDataResult = putData.getResult();
-                    if (putDataResult.equals("Success")) {
-                        result = "QR Successfully saved";
-                    }
-                    else if (putDataResult.equals("Error adding student, try again later."))
-                    {
-                        result = putDataResult;
-                    }
+                    result = putData.getResult();
                 }
             }
             return null;
