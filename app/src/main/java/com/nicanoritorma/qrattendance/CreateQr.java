@@ -9,15 +9,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.OfflineViewModels.QrViewModel;
 import com.nicanoritorma.qrattendance.utils.Connectivity;
-import com.nicanoritorma.qrattendance.viewmodel.GeneratedQrViewModel;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
@@ -99,18 +98,31 @@ public class CreateQr extends BaseActivity {
         byte[] qr = bos.toByteArray();
         String qrCode = Base64.getEncoder().encodeToString(qr);
 
-        if (isConnectedFast) //save to online db
-        {
-            GeneratedQrViewModel onlineViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
-            onlineViewModel.insert(fullname, idNum, dept, qrCode);
-        } else {
-            Toast.makeText(getApplicationContext(), SAVE_ERROR, Toast.LENGTH_SHORT).show();
-        }
+        //offline db
+        QrViewModel qrViewModel = new ViewModelProvider(this).get(QrViewModel.class);
+        qrViewModel.insert(new StudentModel(fullname, idNum, dept, qrCode));
+
         et_fullname.setText("");
         et_idNum.setText("");
         et_dept.setText("");
         iv_qr.setVisibility(View.GONE);
         btn_saveQr.setVisibility(View.GONE);
         et_fullname.requestFocus();
+
+//        if (isConnectedFast) //save to online db
+//        {
+//            GeneratedQrViewModel onlineViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
+//            onlineViewModel.insert(fullname, idNum, dept, qrCode);
+//
+//            //if success clear the field
+//            et_fullname.setText("");
+//            et_idNum.setText("");
+//            et_dept.setText("");
+//            iv_qr.setVisibility(View.GONE);
+//            btn_saveQr.setVisibility(View.GONE);
+//            et_fullname.requestFocus();
+//        } else {
+//            Toast.makeText(getApplicationContext(), SAVE_ERROR, Toast.LENGTH_SHORT).show();
+//        }
     }
 }

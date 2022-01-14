@@ -19,7 +19,7 @@ import java.net.URL;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
-    private CardView progressBar;
+    private static CardView progressBar;
     @Override
     public void setContentView(int layoutResID) {
         ConstraintLayout constraintLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
@@ -35,14 +35,19 @@ public abstract class BaseActivity extends AppCompatActivity {
         return "http://192.168.8.101/qr_atten_sys/";
     }
 
+    public static void showProgressBar(boolean visibility)
+    {
+        progressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
+    }
+
     public void testConnect()
     {
         new testConnect(getDbUrl() + "TestConnect.php").execute();
     }
 
-    class testConnect extends AsyncTask<Void, Void, Integer> {
+    class testConnect extends AsyncTask<Void, Void, Void> {
 
-        String urlString = "";
+        String urlString;
         String result;
         HttpURLConnection urlConnection = null;
         public testConnect(String url) {
@@ -51,11 +56,11 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         @Override
         protected void onPreExecute() {
-            progressBar.setVisibility(View.VISIBLE);
+            showProgressBar(true);
         }
 
         @Override
-        protected Integer doInBackground(Void... voids) {
+        protected Void doInBackground(Void... voids) {
             try {
                 URL url = new URL(urlString);
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -71,13 +76,13 @@ public abstract class BaseActivity extends AppCompatActivity {
         }
 
         @Override
-        protected void onPostExecute(Integer integer) {
+        protected void onPostExecute(Void unused) {
             urlConnection.disconnect();
             if (!result.equals("OK"))
             {
                 Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
             }
-            progressBar.setVisibility(View.GONE);
+            showProgressBar(false);
         }
     }
 }

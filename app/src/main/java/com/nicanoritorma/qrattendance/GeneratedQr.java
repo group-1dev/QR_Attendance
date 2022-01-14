@@ -9,8 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.OfflineViewModels.QrViewModel;
 import com.nicanoritorma.qrattendance.ui.adapter.StudentAdapter;
-import com.nicanoritorma.qrattendance.viewmodel.GeneratedQrViewModel;
+import com.nicanoritorma.qrattendance.OnlineViewModels.GeneratedQrViewModel;
 
 import java.util.List;
 
@@ -39,13 +40,22 @@ public class GeneratedQr extends BaseActivity {
         studentAdapter = new StudentAdapter();
         rv_generatedQr.setAdapter(studentAdapter);
 
-        //online db
-        qrViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
-        qrViewModel.getStudentList().observe(this, new Observer<List<StudentModel>>() {
+        //offline db
+        QrViewModel qrViewModel = new ViewModelProvider(this).get(QrViewModel.class);
+        qrViewModel.getAllStudent().observe(this, new Observer<List<StudentModel>>() {
             @Override
             public void onChanged(List<StudentModel> studentModels) {
                 studentAdapter.setList(studentModels);
             }
         });
+
+//        //online db
+//        qrViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
+//        qrViewModel.getStudentList().observe(this, new Observer<List<StudentModel>>() {
+//            @Override
+//            public void onChanged(List<StudentModel> studentModels) {
+//                studentAdapter.setList(studentModels);
+//            }
+//        });
     }
 }

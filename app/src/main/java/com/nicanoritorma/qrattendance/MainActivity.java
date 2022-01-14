@@ -62,4 +62,8 @@ public class MainActivity extends BaseActivity {
 
     public void btn_stats(View view) {
     }
+
+    public void newAttendance(View view) {
+        startActivity(new Intent(this, NewAttendance.class));
+    }
 }

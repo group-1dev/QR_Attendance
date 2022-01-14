@@ -1,4 +1,4 @@
-package com.nicanoritorma.qrattendance.viewmodel;
+package com.nicanoritorma.qrattendance.OnlineViewModels;
 
 
 import android.app.Application;
@@ -7,7 +7,7 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
 import com.nicanoritorma.qrattendance.model.StudentModel;
-import com.nicanoritorma.qrattendance.repository.StudentRepo;
+import com.nicanoritorma.qrattendance.OnlineRepository.StudentRepo;
 
 import java.util.List;
 

@@ -53,6 +53,7 @@
                 android:textSize="14sp"
                 android:layout_marginTop="3dp"
                 android:visibility="gone" />
+
         </LinearLayout>
 
         <ImageView
@@ -61,7 +62,8 @@
             android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
             android:id="@+id/iv_itemLayout"
-            android:visibility="gone"/>
+            android:visibility="gone"
+            android:contentDescription="@string/app_name" />
     </RelativeLayout>
 
 </androidx.cardview.widget.CardView>

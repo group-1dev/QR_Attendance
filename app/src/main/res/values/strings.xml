@@ -1,3 +1,20 @@
 <resources>
     <string name="app_name">QR Attendance</string>
+    <string name="please_wait">Please wait…</string>
+    <string name="new_attendance">NEW ATTENDANCE</string>
+    <string name="attendance_list">ATTENDANCE LIST</string>
+    <string name="additional_menu">Additional Menu</string>
+    <string name="create_qr_code">CREATE QR CODE</string>
+    <string name="generated_qr_code">GENERATED QR CODE</string>
+
+    <string name="attendance_name">Attendance name</string>
+    <string name="details">Details</string>
+    <string name="create_attendance">CREATE ATTENDANCE</string>
+
+    <string name="fullname">Fullname</string>
+    <string name="id_number">ID Number</string>
+    <string name="department">Department</string>
+    <string name="generate_qr">GENERATE QR</string>
+    <string name="save_qr_code">SAVE QR CODE</string>
+
 </resources>

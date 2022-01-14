@@ -1,11 +1,8 @@
-package com.nicanoritorma.qrattendance.repository;
+package com.nicanoritorma.qrattendance.OnlineRepository;
 
-import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
 import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -16,7 +13,7 @@ import com.nicanoritorma.qrattendance.api.PutData;
 import com.nicanoritorma.qrattendance.model.StudentModel;
 
 import java.util.List;
-public class StudentRepo {
+public class StudentRepo extends BaseActivity {
 
     private Application application;
     private GetStudentOnline studentList;
@@ -42,6 +39,11 @@ public class StudentRepo {
             this.idNumber = idNumber;
             this.dept = dept;
             this.qrCode = qrCode;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            showProgressBar(true);
         }
 
         @Override
@@ -71,6 +73,7 @@ public class StudentRepo {
 
         @Override
         protected void onPostExecute(Void unused) {
+            showProgressBar(false);
             Toast.makeText(application, result, Toast.LENGTH_SHORT).show();
         }
     }

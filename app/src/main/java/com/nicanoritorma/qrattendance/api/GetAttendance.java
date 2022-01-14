@@ -1,35 +1,75 @@
 package com.nicanoritorma.qrattendance.api;
 
+import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
+
+import android.app.Application;
 import android.content.Context;
 
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
+
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.nicanoritorma.qrattendance.model.AttendanceModel;
+import com.nicanoritorma.qrattendance.model.StudentModel;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class GetAttendance {
 
-    private static GetAttendance instance;
-    private RequestQueue requestQueue;
-    private Context context;
+    private MutableLiveData<List<AttendanceModel>> attendanceList;
+    private RequestQueueSingleton requestQueueSingleton;
 
-    private GetAttendance(Context context)
+    public GetAttendance(Application application)
     {
-        this.context = context;
-        requestQueue = getRequestQueue();
+        attendanceList = new MutableLiveData<>();
+        requestQueueSingleton = RequestQueueSingleton.getInstance(application);
     }
 
-    public static synchronized GetAttendance getInstance(Context context) {
-        if (instance == null) {
-            instance = new GetAttendance(context);
-        }
-        return instance;
+    public LiveData<List<AttendanceModel>> getAttendanceList() {
+        getAttendance();
+        return attendanceList;
     }
 
-    public RequestQueue getRequestQueue() {
-        if (requestQueue == null) {
-            // getApplicationContext() is key, it keeps you from leaking the
-            // Activity or BroadcastReceiver if someone passes one in.
-            requestQueue = Volley.newRequestQueue(context.getApplicationContext());
-        }
-        return requestQueue;
+    private void getAttendance()
+    {
+        List<AttendanceModel> list = new ArrayList<>();
+        String URL = getDbUrl() + "GetAttendanceList.php";
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray array = response.getJSONArray("attendanceList");
+                    for (int i = 0; i < array.length(); i++) {
+                        JSONObject data = array.getJSONObject(i);
+
+                        String attendanceName = data.getString("attendanceName");
+                        String details = data.getString("attendanceDetails");
+                        String date = data.getString("attendanceDate");
+                        String time = data.getString("attendanceTime");
+                        list.add(new AttendanceModel(attendanceName, details, date, time));
+                    }
+                    attendanceList.postValue(list);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+            }
+        });
+        requestQueueSingleton.getRequestQueue().add(request);
     }
 }
