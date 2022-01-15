@@ -2,14 +2,11 @@ package com.nicanoritorma.qrattendance;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
@@ -46,7 +43,7 @@ public class AttendanceList extends BaseActivity {
         rv_attendanceList.setAdapter(attendanceAdapter);
 
         //offline attendance list
-        AttendanceVM attendanceVM = new ViewModelProvider(this).get(AttendanceVM.class);
+        AttendanceVM attendanceVM = new AttendanceVM(getApplication());
         attendanceVM.getAllAttendance().observe(this, new Observer<List<AttendanceModel>>() {
             @Override
             public void onChanged(List<AttendanceModel> attendanceModels) {
@@ -60,6 +57,21 @@ public class AttendanceList extends BaseActivity {
                 });
             }
         });
+
+//        AttendanceVM attendanceVM = new ViewModelProvider(this).get(AttendanceVM.class);
+//        attendanceVM.getAllAttendance().observe(this, new Observer<List<AttendanceModel>>() {
+//            @Override
+//            public void onChanged(List<AttendanceModel> attendanceModels) {
+//                attendanceAdapter.setList(attendanceModels, new AttendanceAdapter.OnItemClick() {
+//                    @Override
+//                    public void onItemClick(int position) {
+//                        AttendanceModel attendanceModel = attendanceModels.get(position);
+//                        openClickedAttendance(new AttendanceModel(attendanceModel.getId(), attendanceModel.getAttendanceName(), attendanceModel.getDetails(),
+//                                attendanceModel.getDate(), attendanceModel.getTime()));
+//                    }
+//                });
+//            }
+//        });
 
         /**
          * Online View Model

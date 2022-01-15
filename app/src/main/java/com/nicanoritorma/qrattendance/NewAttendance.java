@@ -4,7 +4,6 @@ import android.os.Bundle;
 import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.button.MaterialButton;
 import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
@@ -56,8 +55,16 @@ public class NewAttendance extends BaseActivity {
     private void AddAttendanceToDb(String attendanceName, String details, String date, String time)
     {
         //offline db
-        AttendanceVM attendanceVM = new ViewModelProvider(this).get(AttendanceVM.class);
-        attendanceVM.insert(new AttendanceModel(attendanceName, details, date, time));
+        if (attendanceName.length() == 0)
+        {
+            et_attendance.setError("Empty field");
+        }
+        else
+        {
+            AttendanceVM attendanceVM = new AttendanceVM(getApplication());
+            attendanceVM.insert(new AttendanceModel(attendanceName, details, date, time));
+        }
+
 
 //        //online db
 //        AttendanceViewModel attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);

@@ -12,12 +12,13 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
 import java.util.List;
 
-public class AttendanceVM extends ViewModel {
+public class AttendanceVM extends AndroidViewModel {
 
     private AttendanceRepository repository;
     private LiveData<List<AttendanceModel>> attendanceList;
 
     public AttendanceVM(@NonNull Application application) {
+        super(application);
         repository = new AttendanceRepository(application);
         attendanceList = repository.getAttendanceList();
     }

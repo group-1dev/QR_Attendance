@@ -17,7 +17,8 @@
         android:usesCleartextTraffic="true">
         <activity
             android:name=".ClickedAttendance"
-            android:exported="false" />
+            android:exported="false"
+            android:parentActivityName=".AttendanceList"/>
         <activity
             android:name=".NewAttendance"
             android:exported="false"

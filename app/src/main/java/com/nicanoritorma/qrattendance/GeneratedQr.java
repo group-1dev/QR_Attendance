@@ -4,7 +4,6 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -41,7 +40,7 @@ public class GeneratedQr extends BaseActivity {
         rv_generatedQr.setAdapter(studentAdapter);
 
         //offline db
-        QrViewModel qrViewModel = new ViewModelProvider(this).get(QrViewModel.class);
+        QrViewModel qrViewModel = new QrViewModel(getApplication());
         qrViewModel.getAllStudent().observe(this, new Observer<List<StudentModel>>() {
             @Override
             public void onChanged(List<StudentModel> studentModels) {
