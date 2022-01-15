@@ -51,14 +51,5 @@ public class AttendanceList extends BaseActivity {
                 attendanceAdapter.setList(attendanceModels);
             }
         });
-
-//        //online attendance list
-//        AttendanceViewModel attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
-//        attendanceViewModel.getAttendanceList().observe(this, new Observer<List<AttendanceModel>>() {
-//            @Override
-//            public void onChanged(List<AttendanceModel> attendanceModels) {
-//                attendanceAdapter.setList(attendanceModels);
-//            }
-//        });
     }
 }

@@ -1,5 +1,6 @@
 package com.nicanoritorma.qrattendance.ui.adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,7 +21,6 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     private List<AttendanceModel> attendanceList = new ArrayList<>();
 
     public static class AttendanceAdapterVH extends RecyclerView.ViewHolder {
-
         private TextView tv_heading1, tv_heading2, tv_heading3;
 
         public AttendanceAdapterVH(@NonNull View itemView) {
@@ -47,6 +47,7 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     @Override
     public void onBindViewHolder(@NonNull AttendanceAdapterVH holder, int position) {
         AttendanceModel attendanceModel = attendanceList.get(position);
+
         if (!attendanceModel.getAttendanceName().isEmpty())
         {
             holder.tv_heading1.setVisibility(View.VISIBLE);
@@ -62,6 +63,14 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
             holder.tv_heading3.setVisibility(View.VISIBLE);
             holder.tv_heading3.setText(attendanceModel.getDate() + " " + attendanceModel.getTime());
         }
+
+        //click listener for attendance list items
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.d( "onClick: ", String.valueOf(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
