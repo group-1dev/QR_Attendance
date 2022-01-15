@@ -40,49 +40,49 @@ public abstract class BaseActivity extends AppCompatActivity {
         progressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
     }
 
-    public void testConnect()
-    {
-        new testConnect(getDbUrl() + "TestConnect.php").execute();
-    }
-
-    class testConnect extends AsyncTask<Void, Void, Void> {
-
-        String urlString;
-        String result;
-        HttpURLConnection urlConnection = null;
-        public testConnect(String url) {
-            this.urlString = url;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            showProgressBar(true);
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            try {
-                URL url = new URL(urlString);
-                urlConnection = (HttpURLConnection) url.openConnection();
-                result = urlConnection.getResponseMessage();
-            } catch (ConnectException e)
-            {
-                result = "Failed to connect error (E01)";
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void unused) {
-            urlConnection.disconnect();
-            if (!result.equals("OK"))
-            {
-                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
-            }
-            showProgressBar(false);
-        }
-    }
+//    public void testConnect()
+//    {
+//        new testConnect(getDbUrl() + "TestConnect.php").execute();
+//    }
+//
+//    class testConnect extends AsyncTask<Void, Void, Void> {
+//
+//        String urlString;
+//        String result;
+//        HttpURLConnection urlConnection = null;
+//        public testConnect(String url) {
+//            this.urlString = url;
+//        }
+//
+//        @Override
+//        protected void onPreExecute() {
+//            showProgressBar(true);
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Void... voids) {
+//            try {
+//                URL url = new URL(urlString);
+//                urlConnection = (HttpURLConnection) url.openConnection();
+//                result = urlConnection.getResponseMessage();
+//            } catch (ConnectException e)
+//            {
+//                result = "Failed to connect error (E01)";
+//            }
+//            catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void unused) {
+//            urlConnection.disconnect();
+//            if (!result.equals("OK"))
+//            {
+//                Toast.makeText(getApplicationContext(), result, Toast.LENGTH_SHORT).show();
+//            }
+//            showProgressBar(false);
+//        }
+//    }
 }

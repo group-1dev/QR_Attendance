@@ -1,12 +1,11 @@
 package com.nicanoritorma.qrattendance;
 
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.EditText;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.lifecycle.ViewModelProvider;
 
-import com.google.android.material.button.MaterialButton;
 import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
@@ -16,7 +15,7 @@ import java.util.Date;
 public class NewAttendance extends BaseActivity {
 
     private EditText et_attendance, et_details;
-    private MaterialButton btn_createAttendance;
+    private Button btn_createAttendance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,8 +55,20 @@ public class NewAttendance extends BaseActivity {
     private void AddAttendanceToDb(String attendanceName, String details, String date, String time)
     {
         //offline db
-        AttendanceVM attendanceVM = new ViewModelProvider(this).get(AttendanceVM.class);
-        attendanceVM.insert(new AttendanceModel(attendanceName, details, date, time));
+        if (attendanceName.length() == 0)
+        {
+            et_attendance.setError("Required field");
+        }
+        else
+        {
+            AttendanceVM attendanceVM = new AttendanceVM(getApplication());
+            attendanceVM.insert(new AttendanceModel(attendanceName, details, date, time));
+            et_attendance.setText("");
+            et_attendance.requestFocus();
+            et_details.setText("");
+            onBackPressed();
+        }
+
 
 //        //online db
 //        AttendanceViewModel attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);

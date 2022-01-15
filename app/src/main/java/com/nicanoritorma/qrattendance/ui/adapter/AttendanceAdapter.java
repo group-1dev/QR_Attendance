@@ -19,21 +19,38 @@ import java.util.List;
 public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.AttendanceAdapterVH> {
 
     private List<AttendanceModel> attendanceList = new ArrayList<>();
+    private OnItemClick onItemClick;
 
-    public static class AttendanceAdapterVH extends RecyclerView.ViewHolder {
-        private TextView tv_heading1, tv_heading2, tv_heading3;
+    public interface OnItemClick{
+        void onItemClick(int position);
+    }
 
-        public AttendanceAdapterVH(@NonNull View itemView) {
+    public static class AttendanceAdapterVH extends RecyclerView.ViewHolder implements View.OnClickListener{
+        TextView tv_heading1, tv_heading2, tv_heading3;
+        OnItemClick onItemClick;
+
+        public AttendanceAdapterVH(@NonNull View itemView, OnItemClick onItemClick) {
             super(itemView);
             tv_heading1 = itemView.findViewById(R.id.tv_heading1);
             tv_heading2 = itemView.findViewById(R.id.tv_heading2);
             tv_heading3 = itemView.findViewById(R.id.tv_heading3);
+            this.onItemClick = onItemClick;
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            if (onItemClick != null && getAdapterPosition() != RecyclerView.NO_POSITION)
+            {
+                onItemClick.onItemClick(getAdapterPosition());
+            }
         }
     }
 
-    public void setList(List<AttendanceModel> attendanceList)
+    public void setList(List<AttendanceModel> attendanceList, OnItemClick onItemClick)
     {
         this.attendanceList = attendanceList;
+        this.onItemClick = onItemClick;
         notifyDataSetChanged();
     }
 
@@ -41,7 +58,7 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     @Override
     public AttendanceAdapterVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
-        return new AttendanceAdapterVH(v);
+        return new AttendanceAdapterVH(v, onItemClick);
     }
 
     @Override
@@ -63,14 +80,6 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
             holder.tv_heading3.setVisibility(View.VISIBLE);
             holder.tv_heading3.setText(attendanceModel.getDate() + " " + attendanceModel.getTime());
         }
-
-        //click listener for attendance list items
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.d( "onClick: ", String.valueOf(holder.getAdapterPosition()));
-            }
-        });
     }
 
     @Override

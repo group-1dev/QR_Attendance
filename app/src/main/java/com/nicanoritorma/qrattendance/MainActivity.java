@@ -39,7 +39,7 @@ public class MainActivity extends BaseActivity {
 
         drop_down = findViewById(R.id.drop_down_gridView);
         drop_down.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
-        testConnect();
+//        testConnect();
     }
 
     public void expandDropDown(View view) {
