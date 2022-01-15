@@ -16,9 +16,12 @@
         android:theme="@style/Theme.QRAttendance"
         android:usesCleartextTraffic="true">
         <activity
+            android:name=".ClickedAttendance"
+            android:exported="false" />
+        <activity
             android:name=".NewAttendance"
             android:exported="false"
-            android:parentActivityName=".MainActivity"/>
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".GeneratedQr"
             android:exported="false"

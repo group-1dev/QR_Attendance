@@ -17,6 +17,14 @@ public class AttendanceModel {
     public AttendanceModel() {
     }
 
+    public AttendanceModel(int id, String attendanceName, String details, String date, String time) {
+        this.id = id;
+        this.attendanceName = attendanceName;
+        this.details = details;
+        this.date = date;
+        this.time = time;
+    }
+
     public AttendanceModel(String attendanceName, String details, String date, String time) {
         this.attendanceName = attendanceName;
         this.date = date;

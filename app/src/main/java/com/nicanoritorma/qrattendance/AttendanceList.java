@@ -3,9 +3,11 @@ package com.nicanoritorma.qrattendance;
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 
@@ -48,8 +50,44 @@ public class AttendanceList extends BaseActivity {
         attendanceVM.getAllAttendance().observe(this, new Observer<List<AttendanceModel>>() {
             @Override
             public void onChanged(List<AttendanceModel> attendanceModels) {
-                attendanceAdapter.setList(attendanceModels);
+                attendanceAdapter.setList(attendanceModels, new AttendanceAdapter.OnItemClick() {
+                    @Override
+                    public void onItemClick(int position) {
+                        AttendanceModel attendanceModel = attendanceModels.get(position);
+                        openClickedAttendance(new AttendanceModel(attendanceModel.getId(), attendanceModel.getAttendanceName(), attendanceModel.getDetails(),
+                                attendanceModel.getDate(), attendanceModel.getTime()));
+                    }
+                });
             }
         });
+
+        /**
+         * Online View Model
+         */
+//        AttendanceViewModel attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
+//        attendanceViewModel.getAttendanceList().observe(this, new Observer<List<AttendanceModel>>() {
+//            @Override
+//            public void onChanged(List<AttendanceModel> attendanceModels) {
+//                attendanceAdapter.setList(attendanceModels, new AttendanceAdapter.OnItemClick() {
+//                    @Override
+//                    public void onItemClick(int position) {
+//                        AttendanceModel attendanceModel = attendanceModels.get(position);
+//                        openClickedAttendance(new AttendanceModel(attendanceModel.getId(), attendanceModel.getAttendanceName(), attendanceModel.getDetails(),
+//                                attendanceModel.getDate(), attendanceModel.getTime()));
+//                    }
+//                });
+//            }
+//        });
+    }
+
+    private void openClickedAttendance(AttendanceModel attendance)
+    {
+        Intent intent = new Intent(AttendanceList.this, ClickedAttendance.class);
+        intent.putExtra(ClickedAttendance.EXTRA_ID, attendance.getId());
+        intent.putExtra(ClickedAttendance.EXTRA_ATTENDANCE_NAME, attendance.getAttendanceName());
+        intent.putExtra(ClickedAttendance.EXTRA_DETAILS, attendance.getDetails());
+        intent.putExtra(ClickedAttendance.EXTRA_DATE, attendance.getDate());
+        intent.putExtra(ClickedAttendance.EXTRA_TIME, attendance.getTime());
+        startActivity(intent);
     }
 }
