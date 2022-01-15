@@ -60,14 +60,17 @@
                 android:textColor="@color/black"
                 android:textSize="20sp" />
 
-            <com.google.android.material.button.MaterialButton
+            <Button
                 android:id="@+id/btn_createAttendance"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:elevation="60dp"
+                android:background="@drawable/edittext_box"
+                android:backgroundTint="@color/gray"
                 android:padding="10dp"
+                android:gravity="center"
                 android:text="@string/create_attendance"
                 android:textColor="@color/white"
                 android:textSize="15sp"

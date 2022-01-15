@@ -11,8 +11,9 @@ import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nicanoritorma.qrattendance.ui.adapter.StudentInAttendanceAdapter;
+import com.nicanoritorma.qrattendance.utils.QrScanner;
 
-public class ClickedAttendance extends AppCompatActivity {
+public class ClickedAttendance extends BaseActivity {
 
     public static final String EXTRA_ID = "com.nicanoritorma.qrattendance.EXTRA_ID";
     public static final String EXTRA_ATTENDANCE_NAME = "com.nicanoritorma.qrattendance.EXTRA_ATTENDANCE_NAME";
@@ -34,7 +35,7 @@ public class ClickedAttendance extends AppCompatActivity {
         fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                startActivity(new Intent(ClickedAttendance.this, QrScanner.class));
             }
         });
 

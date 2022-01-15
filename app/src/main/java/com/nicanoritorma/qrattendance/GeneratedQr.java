@@ -49,7 +49,7 @@ public class GeneratedQr extends BaseActivity {
         });
 
 //        //online db
-//        qrViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
+//        qrViewModel = new GeneratedQrViewModel(getApplication());
 //        qrViewModel.getStudentList().observe(this, new Observer<List<StudentModel>>() {
 //            @Override
 //            public void onChanged(List<StudentModel> studentModels) {

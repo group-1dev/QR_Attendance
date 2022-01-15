@@ -1,7 +1,6 @@
 package com.nicanoritorma.qrattendance;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.lifecycle.ViewModelProvider;
 
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -9,11 +8,13 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
+import com.nicanoritorma.qrattendance.OnlineViewModels.GeneratedQrViewModel;
 import com.nicanoritorma.qrattendance.model.StudentModel;
 import com.nicanoritorma.qrattendance.OfflineViewModels.QrViewModel;
 import com.nicanoritorma.qrattendance.utils.Connectivity;
@@ -99,7 +100,7 @@ public class CreateQr extends BaseActivity {
         String qrCode = Base64.getEncoder().encodeToString(qr);
 
         //offline db
-        QrViewModel qrViewModel = new ViewModelProvider(this).get(QrViewModel.class);
+        QrViewModel qrViewModel = new QrViewModel(getApplication());
         qrViewModel.insert(new StudentModel(fullname, idNum, dept, qrCode));
 
         et_fullname.setText("");
@@ -111,7 +112,7 @@ public class CreateQr extends BaseActivity {
 
 //        if (isConnectedFast) //save to online db
 //        {
-//            GeneratedQrViewModel onlineViewModel = new ViewModelProvider(this).get(GeneratedQrViewModel.class);
+//            GeneratedQrViewModel onlineViewModel = new GeneratedQrViewModel(getApplication());
 //            onlineViewModel.insert(fullname, idNum, dept, qrCode);
 //
 //            //if success clear the field
