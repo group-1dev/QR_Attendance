@@ -26,8 +26,6 @@ import com.nicanoritorma.qrattendance.R;
 public class QrScanner extends Fragment {
 
     private static final int REQUEST_PERMISSION_CAMERA = 100;
-    private static final String TAG = "QRSCANNER";
-
     private CodeScanner mCodeScanner;
 
     public QrScanner() {

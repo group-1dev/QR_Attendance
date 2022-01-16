@@ -3,28 +3,23 @@ package com.nicanoritorma.qrattendance.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "student_table")
-public class StudentModel {
+@Entity(tableName = "studentAdded_table")
+public class StudentInAttendanceModel {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
 
     private String name;
-
     private String idNum;
+    private int parentId;
 
-    private String college;
+    public StudentInAttendanceModel() {}
 
-    private String qrCode;
-
-    public StudentModel(String name, String idNum, String college, String qrCode) {
+    public StudentInAttendanceModel(String name, String idNum, int parentId) {
         this.name = name;
-        this.college = college;
         this.idNum = idNum;
-        this.qrCode = qrCode;
+        this.parentId = parentId;
     }
-
-    public StudentModel() {}
 
     public int getId() {
         return id;
@@ -42,14 +37,6 @@ public class StudentModel {
         this.name = name;
     }
 
-    public String getCollege() {
-        return college;
-    }
-
-    public void setCollege(String college) {
-        this.college = college;
-    }
-
     public String getIdNum() {
         return idNum;
     }
@@ -58,11 +45,11 @@ public class StudentModel {
         this.idNum = idNum;
     }
 
-    public String getQrCode() {
-        return qrCode;
+    public int getParentId() {
+        return parentId;
     }
 
-    public void setQrCode(String qrCode) {
-        this.qrCode = qrCode;
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
     }
 }
