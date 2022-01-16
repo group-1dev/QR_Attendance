@@ -15,12 +15,18 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
+import com.google.android.gms.vision.Detector;
+import com.google.android.gms.vision.barcode.Barcode;
+import com.google.android.gms.vision.barcode.BarcodeDetector;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.zxing.BarcodeFormat;
 import com.nicanoritorma.qrattendance.R;
 
 import java.util.concurrent.ExecutionException;
@@ -76,6 +82,33 @@ public class QrScanner extends Fragment {
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
         iv_border.setVisibility(View.VISIBLE);
         cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview);
+        startScanning();
+    }
+
+    private void startScanning()
+    {
+        BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this.requireContext()).setBarcodeFormats(Barcode.QR_CODE).build();
+
+        barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+            @Override
+            public void release() {
+
+            }
+
+            @Override
+            public void receiveDetections(@NonNull Detector.Detections<Barcode> detections) {
+                final SparseArray<Barcode> codes = detections.getDetectedItems();
+                if (codes.size() != 0) {
+                    codes.valueAt(0);
+                    onQrDetected(codes.valueAt(0).rawValue);
+                }
+            }
+        });
+    }
+
+    private void onQrDetected(String value)
+    {
+        Toast.makeText(this.requireContext(), value, Toast.LENGTH_SHORT).show();
     }
 
     @Override

@@ -71,6 +71,7 @@ public class ClickedAttendance extends BaseActivity {
 
     private void initUI()
     {
+        fab_add.setVisibility(View.VISIBLE);
         ActionBar ab = getSupportActionBar();
 
         Intent intent = getIntent();
