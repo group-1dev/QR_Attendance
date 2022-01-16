@@ -2,6 +2,8 @@ package com.nicanoritorma.qrattendance.utils;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.camera.core.Camera;
+import androidx.camera.core.CameraInfoUnavailableException;
 import androidx.camera.core.CameraSelector;
 import androidx.camera.core.Preview;
 import androidx.camera.lifecycle.ProcessCameraProvider;
@@ -13,6 +15,7 @@ import androidx.lifecycle.LifecycleOwner;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
 import android.util.SparseArray;
@@ -57,7 +60,7 @@ public class QrScanner extends Fragment {
             } catch (ExecutionException | InterruptedException e) {
                 // No errors need to be handled for this Future.
                 // This should never be reached.
-                Log.e(TAG, "cameraProviderFuture.Listener", e);
+                Log.e(TAG, "cameraProviderFuture.ListenerError", e);
             }
         }, ContextCompat.getMainExecutor(this.requireContext()));
     }
@@ -80,13 +83,21 @@ public class QrScanner extends Fragment {
 
         Preview preview = new Preview.Builder().build();
         preview.setSurfaceProvider(previewView.getSurfaceProvider());
-        iv_border.setVisibility(View.VISIBLE);
+
         cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview);
-        startScanning();
+
+        if (previewView.getPreviewStreamState().hasActiveObservers())
+        {
+            Log.d( "startCamera: ", "STARTED");
+            iv_border.setVisibility(View.VISIBLE);
+            startScanning();
+        }
+//
     }
 
     private void startScanning()
     {
+        Log.d(TAG, "startScanning: ");
         BarcodeDetector barcodeDetector = new BarcodeDetector.Builder(this.requireContext()).setBarcodeFormats(Barcode.QR_CODE).build();
 
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
@@ -108,7 +119,8 @@ public class QrScanner extends Fragment {
 
     private void onQrDetected(String value)
     {
-        Toast.makeText(this.requireContext(), value, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "onQrDetected: " + value);
+        //Toast.makeText(this.requireContext(), value, Toast.LENGTH_SHORT).show();
     }
 
     @Override
