@@ -18,9 +18,6 @@
         android:theme="@style/Theme.QRAttendance"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".utils.QrScanner"
-            android:exported="false" />
-        <activity
             android:name=".ClickedAttendance"
             android:exported="false"
             android:parentActivityName=".AttendanceList" />
