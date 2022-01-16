@@ -17,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.QRAttendance"
         android:usesCleartextTraffic="true">
+
         <activity
             android:name=".ClickedAttendance"
             android:exported="false"
