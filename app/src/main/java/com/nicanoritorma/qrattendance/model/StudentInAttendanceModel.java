@@ -9,16 +9,24 @@ public class StudentInAttendanceModel {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
-    private String name;
+    private String fullname;
     private String idNum;
     private int parentId;
 
     public StudentInAttendanceModel() {}
 
-    public StudentInAttendanceModel(String name, String idNum, int parentId) {
-        this.name = name;
+    public StudentInAttendanceModel(String fullname, String idNum, int parentId) {
+        this.fullname = fullname;
         this.idNum = idNum;
         this.parentId = parentId;
+    }
+
+    public String getFullname() {
+        return fullname;
+    }
+
+    public void setFullname(String fullname) {
+        this.fullname = fullname;
     }
 
     public int getId() {
@@ -27,14 +35,6 @@ public class StudentInAttendanceModel {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getIdNum() {

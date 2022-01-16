@@ -5,7 +5,9 @@ import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.RawQuery;
 import androidx.room.Update;
+import androidx.sqlite.db.SupportSQLiteQuery;
 
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
@@ -28,5 +30,8 @@ public interface StudentInAttendanceDAO {
     void deleteAllStudent();
 
     @Query("SELECT * FROM studentAdded_table ORDER BY id ASC")
-    LiveData<List<AttendanceModel>> getAllStudentInAttendance();
+    LiveData<List<StudentInAttendanceModel>> getAllStudentInAttendance();
+
+    @RawQuery(observedEntities = StudentInAttendanceModel.class)
+    LiveData<List<StudentInAttendanceModel>> getStudents(SupportSQLiteQuery query);
 }

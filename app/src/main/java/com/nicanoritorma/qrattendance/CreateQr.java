@@ -46,7 +46,7 @@ public class CreateQr extends BaseActivity {
     private void initUI() {
         ActionBar ab = getSupportActionBar();
         ab.setTitle("Create QR Code");
-        btn_generate.setOnClickListener(view -> genQr(getData()[1]));
+        btn_generate.setOnClickListener(view -> genQr(getData()[0], getData()[1]));
         btn_saveQr.setOnClickListener(view -> {
             iv_qr.setDrawingCacheEnabled(true);
             Bitmap bitmap = iv_qr.getDrawingCache();
@@ -65,13 +65,13 @@ public class CreateQr extends BaseActivity {
     }
 
     //generate qr code
-    private void genQr(String idNum) {
+    private void genQr(String fullname, String idNum) {
         BitMatrix bitMatrix;
         Bitmap bitmap;
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
         try {
-            bitMatrix = qrCodeWriter.encode(idNum, BarcodeFormat.QR_CODE, 250, 250);
+            bitMatrix = qrCodeWriter.encode(fullname+"@"+idNum, BarcodeFormat.QR_CODE, 250, 250);
             bitmap = Bitmap.createBitmap(250, 250, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < 250; x++) {

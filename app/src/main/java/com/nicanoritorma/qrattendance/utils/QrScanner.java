@@ -20,7 +20,9 @@ import com.budiyev.android.codescanner.CodeScannerView;
 import com.budiyev.android.codescanner.DecodeCallback;
 import com.budiyev.android.codescanner.ScanMode;
 import com.google.zxing.Result;
+import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
 import com.nicanoritorma.qrattendance.R;
+import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 
 public class QrScanner extends Fragment {
@@ -36,24 +38,36 @@ public class QrScanner extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         final Activity activity = requireActivity();
+        int EXTRA_ID = requireArguments().getInt("EXTRA_ID");
+
         View view = inflater.inflate(R.layout.activity_qr_scanner, container, false);
         CodeScannerView scannerView = view.findViewById(R.id.scannerView);
         mCodeScanner = new CodeScanner(activity, scannerView);
-        mCodeScanner.setScanMode(ScanMode.CONTINUOUS);
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
             public void onDecoded(@NonNull final Result result) {
+
                 //add to offline list of students in clicked attendance
+                String resultText = result.getText();
+                String[] arrOfStr = resultText.split("@", 2);
+
+                StudentInAttendanceVM student = new StudentInAttendanceVM(activity.getApplication());
+                student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], EXTRA_ID));
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(activity, result.getText(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, arrOfStr[0] + " is successfully added.", Toast.LENGTH_SHORT).show();
                     }
                 });
             }
         });
-        mCodeScanner.startPreview();
+        scannerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCodeScanner.startPreview();
+            }
+        });
 
         return view;
     }

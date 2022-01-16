@@ -35,7 +35,7 @@ public class AttendanceVM extends AndroidViewModel {
         repository.delete(attendance);
     }
 
-    public void deleteAllNotes() {
+    public void deleteAllAttendance() {
         repository.deleteAllAttendance();
     }
 
