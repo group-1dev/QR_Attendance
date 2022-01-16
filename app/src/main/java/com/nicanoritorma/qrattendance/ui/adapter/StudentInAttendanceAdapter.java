@@ -9,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.nicanoritorma.qrattendance.R;
+import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentModel;
 
 import java.util.ArrayList;
@@ -19,21 +20,20 @@ import java.util.List;
  */
 public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAttendanceAdapter.StudentInAttendanceVH> {
 
-    private List<StudentModel> studentsAdded = new ArrayList<>();
-
+    private List<StudentInAttendanceModel> studentsAdded = new ArrayList<>();
+  
     public static class StudentInAttendanceVH extends RecyclerView.ViewHolder
     {
-        TextView tv_heading1, tv_heading2, tv_heading3;
+        TextView tv_heading1, tv_heading2;
 
         public StudentInAttendanceVH(@NonNull View itemView) {
             super(itemView);
             tv_heading1 = itemView.findViewById(R.id.tv_heading1);
             tv_heading2 = itemView.findViewById(R.id.tv_heading2);
-            tv_heading3 = itemView.findViewById(R.id.tv_heading3);
         }
     }
 
-    public void setList(List<StudentModel> studentsAdded)
+    public void setList(List<StudentInAttendanceModel> studentsAdded)
     {
         this.studentsAdded = studentsAdded;
         notifyDataSetChanged();
@@ -48,7 +48,17 @@ public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAt
 
     @Override
     public void onBindViewHolder(@NonNull StudentInAttendanceVH holder, int position) {
-
+        StudentInAttendanceModel student = studentsAdded.get(position);
+        if (student.getFullname().length() > 0)
+        {
+            holder.tv_heading1.setVisibility(View.VISIBLE);
+            holder.tv_heading1.setText(student.getFullname());
+        }
+        if (student.getIdNum().length() > 0)
+        {
+            holder.tv_heading2.setVisibility(View.VISIBLE);
+            holder.tv_heading2.setText(student.getIdNum());
+        }
     }
 
     @Override

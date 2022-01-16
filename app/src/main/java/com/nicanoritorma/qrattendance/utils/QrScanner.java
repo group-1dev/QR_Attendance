@@ -1,116 +1,101 @@
 package com.nicanoritorma.qrattendance.utils;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.ActionBar;
-import androidx.camera.core.Camera;
-import androidx.camera.core.CameraSelector;
-import androidx.camera.core.Preview;
-import androidx.camera.lifecycle.ProcessCameraProvider;
-import androidx.camera.view.PreviewView;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.lifecycle.LifecycleOwner;
+import androidx.fragment.app.Fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.pm.PackageManager;
+
 import android.os.Bundle;
-import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import com.nicanoritorma.qrattendance.BaseActivity;
+import com.budiyev.android.codescanner.CodeScanner;
+import com.budiyev.android.codescanner.CodeScannerView;
+import com.budiyev.android.codescanner.DecodeCallback;
+import com.budiyev.android.codescanner.ScanMode;
+import com.google.zxing.Result;
+import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
 import com.nicanoritorma.qrattendance.R;
+import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executor;
 
-public class QrScanner extends BaseActivity {
+public class QrScanner extends Fragment {
 
-    private static final int REQUEST_PERMISSION_CAMERA = 1;
-    private static final String TAG = "QRSCANNER";
-    private ListenableFuture<ProcessCameraProvider> cameraSource;
-    private PreviewView previewView;
+    private static final int REQUEST_PERMISSION_CAMERA = 100;
+    private CodeScanner mCodeScanner;
+
+    public QrScanner() {
+        super(R.layout.activity_qr_scanner);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        final Activity activity = requireActivity();
+        int EXTRA_ID = requireArguments().getInt("EXTRA_ID");
+
+        View view = inflater.inflate(R.layout.activity_qr_scanner, container, false);
+        CodeScannerView scannerView = view.findViewById(R.id.scannerView);
+        mCodeScanner = new CodeScanner(activity, scannerView);
+        mCodeScanner.setDecodeCallback(new DecodeCallback() {
+            @Override
+            public void onDecoded(@NonNull final Result result) {
+
+                //add to offline list of students in clicked attendance
+                String resultText = result.getText();
+                String[] arrOfStr = resultText.split("@", 2);
+
+                StudentInAttendanceVM student = new StudentInAttendanceVM(activity.getApplication());
+                student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], EXTRA_ID));
+
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(activity, arrOfStr[0] + " is successfully added.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+        });
+        scannerView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCodeScanner.startPreview();
+            }
+        });
+
+        return view;
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_qr_scanner);
-
-        previewView = findViewById(R.id.cameraPreview);
-        initUI();
-    }
-
-    private void initUI()
-    {
-        ActionBar ab = getSupportActionBar();
-        if (ab != null) {
-            ab.setTitle("QR Scanner");
-        }
-    }
-
-
-    private void startCamera()
-    {
-        this.cameraSource = ProcessCameraProvider.getInstance(this);
-        this.cameraSource.addListener(() -> {
-            Log.d(TAG, "cameraProviderFuture.Listener");
-            try {
-                ProcessCameraProvider cameraProvider = cameraSource.get();
-
-                Preview preview = new Preview.Builder()
-                        .build();
-
-                CameraSelector cameraSelector = new CameraSelector.Builder()
-                        .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-                        .build();
-
-                Camera camera = cameraProvider.bindToLifecycle(this,
-                        cameraSelector,
-                        preview);
-
-                cameraProvider.unbindAll();
-
-                preview.setSurfaceProvider(this.previewView.getSurfaceProvider());
-
-            } catch (ExecutionException | InterruptedException e) {
-                // No errors need to be handled for this Future.
-                // This should never be reached.
-                Log.e(TAG, "cameraProviderFuture.Listener", e);
-            }
-        }, ContextCompat.getMainExecutor(this));
-
-
-//        cameraProvider.unbindAll();
-//
-//        CameraSelector cameraSelector = new CameraSelector.Builder()
-//                .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-//                .build();
-//
-//        Preview preview = new Preview.Builder().build();
-//        preview.setSurfaceProvider(previewView.getSurfaceProvider());
-//
-//        cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview);
+    public void onPause() {
+        mCodeScanner.releaseResources();
+        super.onPause();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        if( ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED ) {
-            if( this.cameraSource == null ) {
-                startCamera();
-            }
+        if (ActivityCompat.checkSelfPermission(this.requireContext(), Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED) {
+            mCodeScanner.startPreview();
         } else {
-            this.requestPermissions(new String[] { Manifest.permission.CAMERA }, REQUEST_PERMISSION_CAMERA);
+            this.requestPermissions(new String[]{Manifest.permission.CAMERA}, REQUEST_PERMISSION_CAMERA);
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        if( requestCode == REQUEST_PERMISSION_CAMERA ) {
-            for( int p = 0; p < permissions.length; p++ ) {
-                if(Manifest.permission.CAMERA.equals(permissions[p]) ) {
-                    if( grantResults[p] == PackageManager.PERMISSION_GRANTED ) {
-                        startCamera();
+        if (requestCode == REQUEST_PERMISSION_CAMERA) {
+            for (int p = 0; p < permissions.length; p++) {
+                if (Manifest.permission.CAMERA.equals(permissions[p])) {
+                    if (grantResults[p] == PackageManager.PERMISSION_GRANTED) {
+                        mCodeScanner.startPreview();
                     }
                 }
             }

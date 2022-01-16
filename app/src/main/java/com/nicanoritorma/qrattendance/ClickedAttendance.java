@@ -1,17 +1,25 @@
 package com.nicanoritorma.qrattendance;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
+import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.ui.adapter.StudentInAttendanceAdapter;
 import com.nicanoritorma.qrattendance.utils.QrScanner;
+
+import java.util.List;
 
 public class ClickedAttendance extends BaseActivity {
 
@@ -23,6 +31,9 @@ public class ClickedAttendance extends BaseActivity {
     private RecyclerView rv_studentsAdded;
     private FloatingActionButton fab_add;
     private StudentInAttendanceAdapter studentInAttendanceAdapter;
+    private FragmentManager mFragmentManager;
+    private Intent intent;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,21 +43,31 @@ public class ClickedAttendance extends BaseActivity {
         rv_studentsAdded = findViewById(R.id.rv_studentsInAttendance);
         fab_add = findViewById(R.id.fab_addStudent);
 
+        intent = getIntent();
+        initUI();
+
         fab_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startActivity(new Intent(ClickedAttendance.this, QrScanner.class));
+                fab_add.setVisibility(View.GONE);
+
+                int itemId = intent.getIntExtra("ITEM_ID", 0);
+
+                Bundle bundle = new Bundle();
+                bundle.putInt("EXTRA_ID", itemId);
+                mFragmentManager = getSupportFragmentManager();
+                FragmentTransaction ft = mFragmentManager.beginTransaction();
+                ft.addToBackStack("Scanner");
+                ft.add(R.id.scannerFragment, QrScanner.class, bundle);
+                ft.commit();
             }
         });
-
-        initUI();
     }
 
     private void initUI()
     {
+        fab_add.setVisibility(View.VISIBLE);
         ActionBar ab = getSupportActionBar();
-
-        Intent intent = getIntent();
 
         if (ab != null) {
             if (intent.hasExtra(EXTRA_ATTENDANCE_NAME))
@@ -61,5 +82,21 @@ public class ClickedAttendance extends BaseActivity {
         studentInAttendanceAdapter = new StudentInAttendanceAdapter();
         rv_studentsAdded.setAdapter(studentInAttendanceAdapter);
 
+        StudentInAttendanceVM studentVM = new StudentInAttendanceVM(getApplication());
+        studentVM.getStudentList(intent.getIntExtra("ITEM_ID", 0)).observe(this, new Observer<List<StudentInAttendanceModel>>() {
+            @Override
+            public void onChanged(List<StudentInAttendanceModel> studentInAttendanceModels) {
+                studentInAttendanceAdapter.setList(studentInAttendanceModels);
+            }
+        });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (mFragmentManager.getBackStackEntryCount() > 0) {
+            mFragmentManager.popBackStackImmediate();
+            initUI();
+        }
+        else super.onBackPressed();
     }
 }

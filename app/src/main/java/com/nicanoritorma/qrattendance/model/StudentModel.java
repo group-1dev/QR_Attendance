@@ -17,8 +17,6 @@ public class StudentModel {
 
     private String qrCode;
 
-    //public StudentModel(){}
-
     public StudentModel(String name, String idNum, String college, String qrCode) {
         this.name = name;
         this.college = college;
@@ -26,8 +24,7 @@ public class StudentModel {
         this.qrCode = qrCode;
     }
 
-    public StudentModel() {
-    }
+    public StudentModel() {}
 
     public int getId() {
         return id;

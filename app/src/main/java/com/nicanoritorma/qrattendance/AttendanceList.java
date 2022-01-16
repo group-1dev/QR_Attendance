@@ -7,6 +7,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
@@ -58,20 +59,6 @@ public class AttendanceList extends BaseActivity {
             }
         });
 
-//        AttendanceVM attendanceVM = new ViewModelProvider(this).get(AttendanceVM.class);
-//        attendanceVM.getAllAttendance().observe(this, new Observer<List<AttendanceModel>>() {
-//            @Override
-//            public void onChanged(List<AttendanceModel> attendanceModels) {
-//                attendanceAdapter.setList(attendanceModels, new AttendanceAdapter.OnItemClick() {
-//                    @Override
-//                    public void onItemClick(int position) {
-//                        AttendanceModel attendanceModel = attendanceModels.get(position);
-//                        openClickedAttendance(new AttendanceModel(attendanceModel.getId(), attendanceModel.getAttendanceName(), attendanceModel.getDetails(),
-//                                attendanceModel.getDate(), attendanceModel.getTime()));
-//                    }
-//                });
-//            }
-//        });
 
         /**
          * Online View Model
@@ -95,7 +82,7 @@ public class AttendanceList extends BaseActivity {
     private void openClickedAttendance(AttendanceModel attendance)
     {
         Intent intent = new Intent(AttendanceList.this, ClickedAttendance.class);
-        intent.putExtra(ClickedAttendance.EXTRA_ID, attendance.getId());
+        intent.putExtra("ITEM_ID", attendance.getId());
         intent.putExtra(ClickedAttendance.EXTRA_ATTENDANCE_NAME, attendance.getAttendanceName());
         intent.putExtra(ClickedAttendance.EXTRA_DETAILS, attendance.getDetails());
         intent.putExtra(ClickedAttendance.EXTRA_DATE, attendance.getDate());
