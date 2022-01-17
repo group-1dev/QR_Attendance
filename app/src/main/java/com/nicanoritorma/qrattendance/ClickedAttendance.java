@@ -1,17 +1,28 @@
 package com.nicanoritorma.qrattendance;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
+import android.app.TimePickerDialog;
 import android.content.Intent;
 
 import android.os.Bundle;
+import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
@@ -19,6 +30,7 @@ import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.ui.adapter.StudentInAttendanceAdapter;
 import com.nicanoritorma.qrattendance.utils.QrScanner;
 
+import java.util.Calendar;
 import java.util.List;
 
 public class ClickedAttendance extends BaseActivity {
@@ -44,6 +56,7 @@ public class ClickedAttendance extends BaseActivity {
         fab_add = findViewById(R.id.fab_addStudent);
 
         intent = getIntent();
+        mFragmentManager = getSupportFragmentManager();
         initUI();
 
         fab_add.setOnClickListener(new View.OnClickListener() {
@@ -55,7 +68,6 @@ public class ClickedAttendance extends BaseActivity {
 
                 Bundle bundle = new Bundle();
                 bundle.putInt("EXTRA_ID", itemId);
-                mFragmentManager = getSupportFragmentManager();
                 FragmentTransaction ft = mFragmentManager.beginTransaction();
                 ft.addToBackStack("Scanner");
                 ft.add(R.id.scannerFragment, QrScanner.class, bundle);
@@ -89,6 +101,83 @@ public class ClickedAttendance extends BaseActivity {
                 studentInAttendanceAdapter.setList(studentInAttendanceModels);
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.app_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem changeDT = menu.findItem(R.id.menu_ChangeDT);
+        changeDT.setVisible(true);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId())
+        {
+            case R.id.menu_selectAll:
+                Log.d("onOptionsItemSelected: ", "menu_selectAll is clicked");
+                return true;
+            case R.id.menu_ChangeDT:
+                DialogFragment dateFragment = new DatePickerFragment();
+                dateFragment.show(getSupportFragmentManager(), "datePicker");
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    //Date picker
+    public static class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            final Calendar c = Calendar.getInstance();
+            int year = c.get(Calendar.YEAR);
+            int month = c.get(Calendar.MONTH);
+            int day = c.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            //change date on attendance repository
+
+            //start time picker
+            DialogFragment timeFragment = new TimePickerFragment();
+            timeFragment.show(requireActivity().getSupportFragmentManager(), "timePicker");
+        }
+    }
+
+    //time picker
+    public static class TimePickerFragment extends DialogFragment
+            implements TimePickerDialog.OnTimeSetListener {
+
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current time as the default values for the picker
+            final Calendar c = Calendar.getInstance();
+            int hour = c.get(Calendar.HOUR_OF_DAY);
+            int minute = c.get(Calendar.MINUTE);
+
+            // Create a new instance of TimePickerDialog and return it
+            return new TimePickerDialog(getActivity(), this, hour, minute,
+                    DateFormat.is24HourFormat(getActivity()));
+        }
+
+        @Override
+        public void onTimeSet(TimePicker timePicker, int i, int i1) {
+            //change time on repository of attendance
+        }
     }
 
     @Override

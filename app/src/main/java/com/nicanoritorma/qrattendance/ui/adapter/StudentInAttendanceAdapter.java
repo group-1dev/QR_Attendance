@@ -21,7 +21,7 @@ import java.util.List;
 public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAttendanceAdapter.StudentInAttendanceVH> {
 
     private List<StudentInAttendanceModel> studentsAdded = new ArrayList<>();
-  
+
     public static class StudentInAttendanceVH extends RecyclerView.ViewHolder
     {
         TextView tv_heading1, tv_heading2;
