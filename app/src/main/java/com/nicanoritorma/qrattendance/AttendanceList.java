@@ -59,7 +59,6 @@ public class AttendanceList extends BaseActivity {
             }
         });
 
-
         /**
          * Online View Model
          */

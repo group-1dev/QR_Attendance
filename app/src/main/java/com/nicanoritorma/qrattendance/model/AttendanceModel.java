@@ -1,5 +1,6 @@
 package com.nicanoritorma.qrattendance.model;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
@@ -9,9 +10,16 @@ public class AttendanceModel {
     @PrimaryKey(autoGenerate = true)
     private int id;
 
+    @ColumnInfo(name = "attendanceName")
     private String attendanceName;
+
+    @ColumnInfo(name = "details")
     private String details;
+
+    @ColumnInfo(name = "date")
     private String date;
+
+    @ColumnInfo(name = "time")
     private String time;
 
     public AttendanceModel() {

@@ -11,6 +11,7 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class NewAttendance extends BaseActivity {
 
@@ -40,8 +41,8 @@ public class NewAttendance extends BaseActivity {
 
     private String[] getData()
     {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         Date mDate = new Date();
 
         String attendanceName = et_attendance.getText().toString().trim();

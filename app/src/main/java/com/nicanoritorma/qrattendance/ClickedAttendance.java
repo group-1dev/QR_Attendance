@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Application;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -25,13 +26,20 @@ import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
 import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
+import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.ui.adapter.StudentInAttendanceAdapter;
 import com.nicanoritorma.qrattendance.utils.QrScanner;
 
+import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class ClickedAttendance extends BaseActivity {
 
@@ -45,41 +53,43 @@ public class ClickedAttendance extends BaseActivity {
     private StudentInAttendanceAdapter studentInAttendanceAdapter;
     private FragmentManager mFragmentManager;
     private Intent intent;
-
+    private static String newDate;
+    private static int itemId;
+    private static Application application;
+    private static ActionBar ab;
+    private static Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_clicked_attendance);
 
+        ClickedAttendance.application = getApplication();
+
         rv_studentsAdded = findViewById(R.id.rv_studentsInAttendance);
         fab_add = findViewById(R.id.fab_addStudent);
 
         intent = getIntent();
+        itemId = intent.getIntExtra("ITEM_ID", 0);
         mFragmentManager = getSupportFragmentManager();
         initUI();
 
-        fab_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fab_add.setVisibility(View.GONE);
+        fab_add.setOnClickListener(view -> {
+            fab_add.setVisibility(View.GONE);
 
-                int itemId = intent.getIntExtra("ITEM_ID", 0);
-
-                Bundle bundle = new Bundle();
-                bundle.putInt("EXTRA_ID", itemId);
-                FragmentTransaction ft = mFragmentManager.beginTransaction();
-                ft.addToBackStack("Scanner");
-                ft.add(R.id.scannerFragment, QrScanner.class, bundle);
-                ft.commit();
-            }
+            Bundle bundle = new Bundle();
+            bundle.putInt("EXTRA_ID", itemId);
+            FragmentTransaction ft = mFragmentManager.beginTransaction();
+            ft.addToBackStack("Scanner");
+            ft.add(R.id.scannerFragment, QrScanner.class, bundle);
+            ft.commit();
         });
     }
 
     private void initUI()
     {
         fab_add.setVisibility(View.VISIBLE);
-        ActionBar ab = getSupportActionBar();
+        ab = getSupportActionBar();
 
         if (ab != null) {
             if (intent.hasExtra(EXTRA_ATTENDANCE_NAME))
@@ -150,7 +160,7 @@ public class ClickedAttendance extends BaseActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            //change date on attendance repository
+            newDate = String.valueOf(day) + "/" + String.valueOf(month+1) + "/" + String.valueOf(year);
 
             //start time picker
             DialogFragment timeFragment = new TimePickerFragment();
@@ -175,8 +185,23 @@ public class ClickedAttendance extends BaseActivity {
         }
 
         @Override
-        public void onTimeSet(TimePicker timePicker, int i, int i1) {
-            //change time on repository of attendance
+        public void onTimeSet(TimePicker timePicker, int hour, int minute) {
+            String newTime;
+            if (minute >= 10) {
+                newTime = hour + ":" + minute;
+            } else {
+                newTime = hour + ":0" + minute;
+            }
+
+            //Update the date and time in repository via attendance view model
+            AttendanceVM attendanceVM = new AttendanceVM(application);
+            attendanceVM.updateTime(itemId, newDate, newTime);
+            attendanceVM.getAttendanceDT(itemId).observe(this, new Observer<AttendanceModel>() {
+                @Override
+                public void onChanged(AttendanceModel attendanceModel) {
+                    ab.setSubtitle(attendanceModel.getDate() + " " + attendanceModel.getTime());
+                }
+            });
         }
     }
 
