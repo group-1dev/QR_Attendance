@@ -6,17 +6,30 @@
         android:id="@+id/menu_ChangeDT"
         android:title="Change Date/Time"
         android:visible="false"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_selectAll"
         android:title="Select All"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/menu_saveOnline"
         android:title="Save to online backup"
         android:visible="false"
-        app:showAsAction="never"/>
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_deleteItem"
+        android:title="Delete"
+        android:visible="false"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/menu_deleteAll"
+        android:title="Delete All"
+        android:visible="false"
+        app:showAsAction="never" />
+
 
 </menu>

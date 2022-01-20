@@ -37,6 +37,7 @@ import com.nicanoritorma.qrattendance.utils.QrScanner;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -58,6 +59,7 @@ public class ClickedAttendance extends BaseActivity {
     private static int itemId;
     private static Application application;
     private static ActionBar ab;
+    private List<StudentInAttendanceModel> selectedStudent = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +110,14 @@ public class ClickedAttendance extends BaseActivity {
         studentVM.getStudentList(intent.getIntExtra("ITEM_ID", 0)).observe(this, new Observer<List<StudentInAttendanceModel>>() {
             @Override
             public void onChanged(List<StudentInAttendanceModel> studentInAttendanceModels) {
-                studentInAttendanceAdapter.setList(studentInAttendanceModels);
+                studentInAttendanceAdapter.setList(studentInAttendanceModels, new StudentInAttendanceAdapter.OnItemLongClick() {
+                    @Override
+                    public void onItemLongClick(int position) {
+                        StudentInAttendanceModel studentInAttendanceModel = studentInAttendanceModels.get(position);
+                        Log.d( "onItemLongClick: ", studentInAttendanceModel.getFullname());
+                        selectedStudent.add(studentInAttendanceModel);
+                    }
+                });
             }
         });
     }
@@ -123,7 +132,9 @@ public class ClickedAttendance extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem changeDT = menu.findItem(R.id.menu_ChangeDT);
+        MenuItem delete = menu.findItem(R.id.menu_deleteItem);
         changeDT.setVisible(true);
+        delete.setVisible(true);
         return true;
     }
 
@@ -132,15 +143,29 @@ public class ClickedAttendance extends BaseActivity {
         switch (item.getItemId())
         {
             case R.id.menu_selectAll:
-                Log.d("onOptionsItemSelected: ", "menu_selectAll is clicked");
+                StudentInAttendanceAdapter adapter = new StudentInAttendanceAdapter();
+                adapter.selectAll();
                 return true;
             case R.id.menu_ChangeDT:
                 DialogFragment dateFragment = new DatePickerFragment();
                 dateFragment.show(getSupportFragmentManager(), "datePicker");
                 return true;
+            case R.id.menu_deleteItem:
+                for (int i = 0; i < selectedStudent.size(); i++)
+                {
+                    StudentInAttendanceModel student1 = selectedStudent.get(i);
+                    deleteItem(student1);
+                }
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    private void deleteItem(StudentInAttendanceModel student)
+    {
+        StudentInAttendanceVM studentInAttendanceVM = new StudentInAttendanceVM(application);
+        studentInAttendanceVM.delete(student);
     }
 
     //Date picker
@@ -214,8 +239,7 @@ public class ClickedAttendance extends BaseActivity {
         else
         {
             super.onBackPressed();
-            overridePendingTransition(R.anim.slide_in_left,
-                    R.anim.slide_out_right);
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
     }
 

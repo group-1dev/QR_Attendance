@@ -39,7 +39,6 @@ public class MainActivity extends BaseActivity {
 
         drop_down = findViewById(R.id.drop_down_gridView);
         drop_down.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
-//        testConnect();
     }
 
     public void expandDropDown(View view) {
@@ -61,9 +60,6 @@ public class MainActivity extends BaseActivity {
     public void btn_generatedQr(View view) {
         startActivity(new Intent(this, GeneratedQr.class));
         this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-    }
-
-    public void btn_stats(View view) {
     }
 
     public void newAttendance(View view) {

@@ -15,13 +15,11 @@ import java.util.List;
 public class StudentInAttendanceRepository {
 
     private StudentInAttendanceDAO studentInAttendanceDAO;
-    private LiveData<List<StudentInAttendanceModel>> studentInAttendance;
 
     public StudentInAttendanceRepository(Application application) {
 
         StudentInAttendanceDB database = StudentInAttendanceDB.getInstance(application);
         studentInAttendanceDAO = database.studentInAttendanceDAO();
-        //studentInAttendance = studentInAttendanceDAO.getAllStudentInAttendance();
     }
 
     public void insert(StudentInAttendanceModel student)
@@ -31,21 +29,17 @@ public class StudentInAttendanceRepository {
 
     public void update(StudentInAttendanceModel student)
     {
-        new InsertStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
+        new UpdateStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
     }
 
     public void delete(StudentInAttendanceModel student)
     {
-        new InsertStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
+        new DeleteStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
     }
 
     public void deleteAllStudentInAttendance()
     {
         new DeleteAllStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute();
-    }
-
-    public LiveData<List<StudentInAttendanceModel>> getStudentInAttendanceList() {
-        return studentInAttendance;
     }
 
     public LiveData<List<StudentInAttendanceModel>> getStudentsInAttendance(SimpleSQLiteQuery query)

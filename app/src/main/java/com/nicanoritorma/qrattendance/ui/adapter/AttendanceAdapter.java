@@ -1,6 +1,5 @@
 package com.nicanoritorma.qrattendance.ui.adapter;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nicanoritorma.qrattendance.R;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
-import com.nicanoritorma.qrattendance.model.StudentModel;
 
 import java.util.ArrayList;
 import java.util.List;

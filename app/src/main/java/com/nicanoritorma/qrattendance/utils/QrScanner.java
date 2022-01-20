@@ -52,7 +52,12 @@ public class QrScanner extends Fragment {
                 String[] arrOfStr = resultText.split("@", 2);
 
                 StudentInAttendanceVM student = new StudentInAttendanceVM(activity.getApplication());
-                student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], EXTRA_ID));
+                try {
+                    student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], EXTRA_ID));
+                }catch (Exception e)
+                {
+                    Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show();
+                }
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
