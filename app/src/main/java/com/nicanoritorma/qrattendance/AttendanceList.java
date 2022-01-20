@@ -88,4 +88,17 @@ public class AttendanceList extends BaseActivity {
         intent.putExtra(ClickedAttendance.EXTRA_TIME, attendance.getTime());
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,
+                R.anim.slide_out_right);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
+    }
 }

@@ -34,7 +34,9 @@ public class NewAttendance extends BaseActivity {
     private void initUI()
     {
         ActionBar ab = getSupportActionBar();
-        ab.setTitle("Create Attendance");
+        if (ab != null) {
+            ab.setTitle("Create Attendance");
+        }
 
         btn_createAttendance.setOnClickListener(view -> AddAttendanceToDb(getData()[0], getData()[1], getData()[2], getData()[3]));
     }
@@ -75,5 +77,18 @@ public class NewAttendance extends BaseActivity {
 //        AttendanceViewModel attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
 //        attendanceViewModel.insert(attendanceName, details, date, time);
 //
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left,
+                R.anim.slide_out_right);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

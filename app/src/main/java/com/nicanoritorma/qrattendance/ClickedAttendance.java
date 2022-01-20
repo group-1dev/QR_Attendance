@@ -22,6 +22,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.DatePicker;
 import android.widget.TimePicker;
 
@@ -57,7 +58,6 @@ public class ClickedAttendance extends BaseActivity {
     private static int itemId;
     private static Application application;
     private static ActionBar ab;
-    private static Calendar calendar = Calendar.getInstance();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -211,6 +211,17 @@ public class ClickedAttendance extends BaseActivity {
             mFragmentManager.popBackStackImmediate();
             initUI();
         }
-        else super.onBackPressed();
+        else
+        {
+            super.onBackPressed();
+            overridePendingTransition(R.anim.slide_in_left,
+                    R.anim.slide_out_right);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

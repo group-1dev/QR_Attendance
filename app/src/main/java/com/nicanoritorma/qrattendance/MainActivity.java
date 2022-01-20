@@ -50,14 +50,17 @@ public class MainActivity extends BaseActivity {
 
     public void btn_createQr(View view) {
         startActivity(new Intent(this, CreateQr.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void btn_attendanceList(View view) {
         startActivity(new Intent(this, AttendanceList.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void btn_generatedQr(View view) {
         startActivity(new Intent(this, GeneratedQr.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void btn_stats(View view) {
@@ -65,5 +68,6 @@ public class MainActivity extends BaseActivity {
 
     public void newAttendance(View view) {
         startActivity(new Intent(this, NewAttendance.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }
