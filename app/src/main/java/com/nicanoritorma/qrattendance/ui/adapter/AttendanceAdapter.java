@@ -1,8 +1,10 @@
 package com.nicanoritorma.qrattendance.ui.adapter;
 
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -10,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nicanoritorma.qrattendance.R;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
+import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,38 +20,45 @@ import java.util.List;
 public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.AttendanceAdapterVH> {
 
     private List<AttendanceModel> attendanceList = new ArrayList<>();
-    private OnItemClick onItemClick;
+    private SparseBooleanArray selectedAttendance = new SparseBooleanArray();
 
-    public interface OnItemClick{
-        void onItemClick(int position);
+    public void addSelectedItem(Integer selectedStudent)
+    {
+        selectedAttendance.put(selectedStudent, true);
     }
 
-    public static class AttendanceAdapterVH extends RecyclerView.ViewHolder implements View.OnClickListener{
-        TextView tv_heading1, tv_heading2, tv_heading3;
-        OnItemClick onItemClick;
+    public void removeSelectedItem(Integer selectedItem) {
+        selectedAttendance.delete(selectedItem);
+    }
 
-        public AttendanceAdapterVH(@NonNull View itemView, OnItemClick onItemClick) {
+    public void clearSelectedItems() {
+        selectedAttendance.clear();
+    }
+
+    public AttendanceModel getItem(int index) {
+        return attendanceList.get(index);
+    }
+
+    public SparseBooleanArray getSelectedItems() {
+        return selectedAttendance;
+    }
+
+    public static class AttendanceAdapterVH extends RecyclerView.ViewHolder {
+        TextView tv_heading1, tv_heading2, tv_heading3;
+        RelativeLayout item;
+
+        public AttendanceAdapterVH(@NonNull View itemView) {
             super(itemView);
             tv_heading1 = itemView.findViewById(R.id.tv_heading1);
             tv_heading2 = itemView.findViewById(R.id.tv_heading2);
             tv_heading3 = itemView.findViewById(R.id.tv_heading3);
-            this.onItemClick = onItemClick;
-            itemView.setOnClickListener(this);
-        }
-
-        @Override
-        public void onClick(View view) {
-            if (onItemClick != null && getAdapterPosition() != RecyclerView.NO_POSITION)
-            {
-                onItemClick.onItemClick(getAdapterPosition());
-            }
+            item = itemView.findViewById(R.id.item_relative_layout);
         }
     }
 
-    public void setList(List<AttendanceModel> attendanceList, OnItemClick onItemClick)
+    public void setList(List<AttendanceModel> attendanceList)
     {
         this.attendanceList = attendanceList;
-        this.onItemClick = onItemClick;
         notifyDataSetChanged();
     }
 
@@ -56,7 +66,7 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
     @Override
     public AttendanceAdapterVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout, parent, false);
-        return new AttendanceAdapterVH(v, onItemClick);
+        return new AttendanceAdapterVH(v);
     }
 
     @Override
@@ -77,6 +87,24 @@ public class AttendanceAdapter extends RecyclerView.Adapter<AttendanceAdapter.At
         {
             holder.tv_heading3.setVisibility(View.VISIBLE);
             holder.tv_heading3.setText(attendanceModel.getDate() + " " + attendanceModel.getTime());
+        }
+        manageSelectionColor(position, holder);
+    }
+
+    public void restoreDrawable(View v) {
+        final int paddingBottom = v.getPaddingBottom();
+        final int paddingLeft = v.getPaddingLeft();
+        final int paddingRight = v.getPaddingRight();
+        final int paddingTop = v.getPaddingTop();
+        v.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+        v.setBackgroundResource(R.color.white);
+    }
+
+    private void manageSelectionColor(int position, AttendanceAdapterVH holder) {
+        if (selectedAttendance.get(position)) {
+            holder.item.setBackgroundResource(R.drawable.selected_item_border);
+        } else {
+            restoreDrawable(holder.item);
         }
     }
 

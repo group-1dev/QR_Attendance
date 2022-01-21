@@ -23,7 +23,6 @@ import java.util.List;
 public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAttendanceAdapter.StudentInAttendanceVH> {
 
     private List<StudentInAttendanceModel> studentsAdded = new ArrayList<>();
-    //private List<StudentInAttendanceModel> selectedStudents = new ArrayList<>();
     private SparseBooleanArray selectedStudents = new SparseBooleanArray();
 
     public void addSelectedItem(Integer selectedStudent)
@@ -46,7 +45,6 @@ public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAt
     public SparseBooleanArray getSelectedItems() {
         return selectedStudents;
     }
-
 
     public static class StudentInAttendanceVH extends RecyclerView.ViewHolder
     {
@@ -87,21 +85,25 @@ public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAt
             holder.tv_heading2.setVisibility(View.VISIBLE);
             holder.tv_heading2.setText(student.getIdNum());
         }
-        manageSelectionColor(position, student, holder);
+        manageSelectionColor(position, holder);
     }
 
     public void restoreDrawable(View v) {
+        final int paddingBottom = v.getPaddingBottom();
+        final int paddingLeft = v.getPaddingLeft();
+        final int paddingRight = v.getPaddingRight();
+        final int paddingTop = v.getPaddingTop();
+        v.setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         v.setBackgroundResource(R.color.white);
     }
 
-    private void manageSelectionColor(int position, StudentInAttendanceModel student, StudentInAttendanceVH holder) {
+    private void manageSelectionColor(int position, StudentInAttendanceVH holder) {
         if (selectedStudents.get(position)) {
             holder.item.setBackgroundResource(R.drawable.selected_item_border);
         } else {
             restoreDrawable(holder.item);
         }
     }
-
 
     @Override
     public int getItemCount() {

@@ -1,6 +1,7 @@
 package com.nicanoritorma.qrattendance.OfflineViewModels;
 
 import android.app.Application;
+import android.database.Cursor;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -43,6 +44,11 @@ public class StudentInAttendanceVM extends AndroidViewModel {
 
     public LiveData<List<StudentInAttendanceModel>> getAllStudentInAttendance() {
         return studentList;
+    }
+
+    //get all attendance content to be save to device storage
+    public Cursor getAttendanceContent(int id) {
+        return repository.getAttendanceContent(id);
     }
 
     public LiveData<List<StudentInAttendanceModel>> getStudentList(int parentId)

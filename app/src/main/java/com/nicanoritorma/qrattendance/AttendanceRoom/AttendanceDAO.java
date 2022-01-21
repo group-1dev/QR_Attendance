@@ -1,5 +1,7 @@
 package com.nicanoritorma.qrattendance.AttendanceRoom;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -37,5 +39,6 @@ public interface AttendanceDAO {
 
     @Query("SELECT * FROM attendance_table ORDER BY id ASC")
     LiveData<List<AttendanceModel>> getAllAttendance();
+
 
 }

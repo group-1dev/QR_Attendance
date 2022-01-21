@@ -118,7 +118,7 @@ public class ClickedAttendance extends BaseActivity {
                             if (actionMode != null) {
                                 return false;
                             }
-                    // Start the CAB using the ActionMode.Callback defined above
+                    // Start the CAB using the ActionMode.Callback defined below
                     ClickedAttendance.this.startActionMode(new ModeCallback());
                     toggleListViewItem(view, position);
                     setCABTitle();
@@ -147,7 +147,6 @@ public class ClickedAttendance extends BaseActivity {
             getSelectedStudent().remove(student);
             studentInAttendanceAdapter.removeSelectedItem(position);
             studentInAttendanceAdapter.restoreDrawable(item);
-            //item.setBackgroundResource(R.color.white);
         }
         prepareActionModeMenu();
 
@@ -161,7 +160,11 @@ public class ClickedAttendance extends BaseActivity {
     private void prepareActionModeMenu()
     {
         Menu menu = actionMode.getMenu();
-        menu.findItem(R.id.menuActionSelectAll).setVisible(true);
+
+        if (studentInAttendanceAdapter.getItemCount() > 1)
+        {
+            menu.findItem(R.id.menuActionSelectAll).setVisible(true);
+        }
         menu.findItem(R.id.menuActionDelete).setVisible(true);
     }
 
@@ -194,7 +197,7 @@ public class ClickedAttendance extends BaseActivity {
 
             switch (item.getItemId()) {
                 case R.id.menuActionSelectAll:
-                    selectAllNotes();
+                    selectAllStudents();
                     return true;
                 case R.id.menuActionDelete:
                     for (int i = 0; i < selectedStudent.size(); i++) {
@@ -224,7 +227,7 @@ public class ClickedAttendance extends BaseActivity {
         }
     }
 
-    private void selectAllNotes() {
+    private void selectAllStudents() {
         for (int i = 0; i < rv_studentsAdded.getChildCount(); i++) {
             RelativeLayout item = rv_studentsAdded.getChildAt(i).findViewById(R.id.item_relative_layout);
             item.setBackgroundResource(R.drawable.selected_item_border);

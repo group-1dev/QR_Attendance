@@ -1,6 +1,7 @@
 package com.nicanoritorma.qrattendance.OfflineRepository;
 
 import android.app.Application;
+import android.database.Cursor;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;
@@ -45,6 +46,11 @@ public class StudentInAttendanceRepository {
     public LiveData<List<StudentInAttendanceModel>> getStudentsInAttendance(SimpleSQLiteQuery query)
     {
         return studentInAttendanceDAO.getStudents(query);
+    }
+
+    public Cursor getAttendanceContent(int id)
+    {
+        return studentInAttendanceDAO.getAttendanceContent(id);
     }
 
     private static class InsertStudentInAttendanceAsyncTask extends AsyncTask<StudentInAttendanceModel, Void, Void> {

@@ -1,6 +1,7 @@
 package com.nicanoritorma.qrattendance.OfflineRepository;
 
 import android.app.Application;
+import android.database.Cursor;
 import android.os.AsyncTask;
 
 import androidx.lifecycle.LiveData;

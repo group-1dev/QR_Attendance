@@ -71,7 +71,7 @@ public class CreateQr extends BaseActivity {
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
         try {
-            bitMatrix = qrCodeWriter.encode(fullname+"@"+idNum, BarcodeFormat.QR_CODE, 250, 250);
+            bitMatrix = qrCodeWriter.encode(fullname+"&"+idNum, BarcodeFormat.QR_CODE, 250, 250);
             bitmap = Bitmap.createBitmap(250, 250, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < 250; x++) {

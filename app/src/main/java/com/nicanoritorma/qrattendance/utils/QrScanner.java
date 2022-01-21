@@ -49,22 +49,27 @@ public class QrScanner extends Fragment {
 
                 //add to offline list of students in clicked attendance
                 String resultText = result.getText();
-                String[] arrOfStr = resultText.split("@", 2);
+                String[] arrOfStr = resultText.split("&");
 
                 StudentInAttendanceVM student = new StudentInAttendanceVM(activity.getApplication());
                 try {
                     student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], EXTRA_ID));
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity, arrOfStr[0] + " is successfully added.", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }catch (Exception e)
                 {
-                    Toast.makeText(requireContext(), e.toString(), Toast.LENGTH_SHORT).show();
-                }
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(requireContext(), "QR cannot be read, try again", Toast.LENGTH_SHORT).show();
+                        }
+                    });
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, arrOfStr[0] + " is successfully added.", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                }
             }
         });
         scannerView.setOnClickListener(new View.OnClickListener() {

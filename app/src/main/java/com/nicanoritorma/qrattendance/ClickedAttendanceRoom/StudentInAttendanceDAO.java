@@ -1,5 +1,7 @@
 package com.nicanoritorma.qrattendance.ClickedAttendanceRoom;
 
+import android.database.Cursor;
+
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -34,4 +36,7 @@ public interface StudentInAttendanceDAO {
 
     @RawQuery(observedEntities = StudentInAttendanceModel.class)
     LiveData<List<StudentInAttendanceModel>> getStudents(SupportSQLiteQuery query);
+
+    @Query("SELECT * FROM studentAdded_table WHERE id=:id")
+    Cursor getAttendanceContent(int id);
 }

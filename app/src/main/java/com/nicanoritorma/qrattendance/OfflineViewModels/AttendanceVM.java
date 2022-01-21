@@ -1,6 +1,7 @@
 package com.nicanoritorma.qrattendance.OfflineViewModels;
 
 import android.app.Application;
+import android.database.Cursor;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -36,8 +37,7 @@ public class AttendanceVM extends AndroidViewModel {
         repository.updateTime(id, date, time);
     }
 
-    public LiveData<AttendanceModel> getAttendanceDT(int id)
-    {
+    public LiveData<AttendanceModel> getAttendanceDT(int id) {
         return repository.getAttendanceDT(id);
     }
 
@@ -49,6 +49,7 @@ public class AttendanceVM extends AndroidViewModel {
         repository.deleteAllAttendance();
     }
 
+    //get all attendance content to be displayed
     public LiveData<List<AttendanceModel>> getAllAttendance() {
         return attendanceList;
     }
