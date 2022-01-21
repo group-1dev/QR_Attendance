@@ -17,13 +17,13 @@ import android.content.Intent;
 
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.DatePicker;
+import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -33,19 +33,14 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.ui.adapter.StudentInAttendanceAdapter;
 import com.nicanoritorma.qrattendance.utils.QrScanner;
+import com.nicanoritorma.qrattendance.utils.RecyclerViewItemClickSupport;
 
-import java.sql.Time;
-import java.text.SimpleDateFormat;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class ClickedAttendance extends BaseActivity {
 
-    public static final String EXTRA_ID = "com.nicanoritorma.qrattendance.EXTRA_ID";
     public static final String EXTRA_ATTENDANCE_NAME = "com.nicanoritorma.qrattendance.EXTRA_ATTENDANCE_NAME";
     public static final String EXTRA_DETAILS = "com.nicanoritorma.qrattendance.EXTRA_DETAILS";
     public static final String EXTRA_DATE = "com.nicanoritorma.qrattendance.EXTRA_DATE";
@@ -59,7 +54,8 @@ public class ClickedAttendance extends BaseActivity {
     private static int itemId;
     private static Application application;
     private static ActionBar ab;
-    private List<StudentInAttendanceModel> selectedStudent = new ArrayList<>();
+    private final List<StudentInAttendanceModel> selectedStudent = new ArrayList<>();
+    private ActionMode actionMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,14 +84,12 @@ public class ClickedAttendance extends BaseActivity {
         });
     }
 
-    private void initUI()
-    {
+    private void initUI() {
         fab_add.setVisibility(View.VISIBLE);
         ab = getSupportActionBar();
 
         if (ab != null) {
-            if (intent.hasExtra(EXTRA_ATTENDANCE_NAME))
-            {
+            if (intent.hasExtra(EXTRA_ATTENDANCE_NAME)) {
                 ab.setTitle(intent.getStringExtra(EXTRA_ATTENDANCE_NAME));
                 ab.setSubtitle(intent.getStringExtra(EXTRA_DATE) + " " + intent.getStringExtra(EXTRA_TIME));
             }
@@ -110,17 +104,140 @@ public class ClickedAttendance extends BaseActivity {
         studentVM.getStudentList(intent.getIntExtra("ITEM_ID", 0)).observe(this, new Observer<List<StudentInAttendanceModel>>() {
             @Override
             public void onChanged(List<StudentInAttendanceModel> studentInAttendanceModels) {
-                studentInAttendanceAdapter.setList(studentInAttendanceModels, new StudentInAttendanceAdapter.OnItemLongClick() {
-                    @Override
-                    public void onItemLongClick(int position) {
-                        StudentInAttendanceModel studentInAttendanceModel = studentInAttendanceModels.get(position);
-                        Log.d( "onItemLongClick: ", studentInAttendanceModel.getFullname());
-                        selectedStudent.add(studentInAttendanceModel);
-                    }
+                studentInAttendanceAdapter.setList(studentInAttendanceModels);
+
+                RecyclerViewItemClickSupport.addTo(rv_studentsAdded)
+                        .setOnItemClickListener((recyclerView, position, view) -> {
+                            if (actionMode == null) {
+                                return;
+                            }
+                            // If in CAB mode
+                            toggleListViewItem(view, position);
+                            setCABTitle();
+                        }).setOnItemLongClickListener((recyclerView, position, view) -> {
+                            if (actionMode != null) {
+                                return false;
+                            }
+                    // Start the CAB using the ActionMode.Callback defined above
+                    ClickedAttendance.this.startActionMode(new ModeCallback());
+                    toggleListViewItem(view, position);
+                    setCABTitle();
+                    return true;
                 });
+
             }
         });
     }
+
+    private List<StudentInAttendanceModel> getSelectedStudent()
+    {
+        return selectedStudent;
+    }
+
+    public void toggleListViewItem(View view, int position)
+    {
+        StudentInAttendanceModel student = studentInAttendanceAdapter.getItem(position);
+        RelativeLayout item = view.findViewById(R.id.item_relative_layout);
+
+        if (!getSelectedStudent().contains(student)) {
+            getSelectedStudent().add(student);
+            studentInAttendanceAdapter.addSelectedItem(position);
+            item.setBackgroundResource(R.drawable.selected_item_border);
+        } else {
+            getSelectedStudent().remove(student);
+            studentInAttendanceAdapter.removeSelectedItem(position);
+            studentInAttendanceAdapter.restoreDrawable(item);
+            //item.setBackgroundResource(R.color.white);
+        }
+        prepareActionModeMenu();
+
+        if (selectedStudent.isEmpty()) {
+            finishActionMode();
+        }
+
+        setCABTitle();
+    }
+
+    private void prepareActionModeMenu()
+    {
+        Menu menu = actionMode.getMenu();
+        menu.findItem(R.id.menuActionSelectAll).setVisible(true);
+        menu.findItem(R.id.menuActionDelete).setVisible(true);
+    }
+
+    private void setCABTitle() {
+        if (actionMode != null) {
+            int title = selectedStudent.size();
+            actionMode.setTitle(String.valueOf(title));
+        }
+    }
+
+    private final class ModeCallback implements ActionMode.Callback {
+
+
+        @Override
+        public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+            MenuInflater inflater = mode.getMenuInflater();
+            actionMode = mode;
+            inflater.inflate(R.menu.app_menu, menu);
+            return true;
+        }
+
+        @Override
+        public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+            prepareActionModeMenu();
+            return true;
+        }
+
+        @Override
+        public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+
+            switch (item.getItemId()) {
+                case R.id.menuActionSelectAll:
+                    selectAllNotes();
+                    return true;
+                case R.id.menuActionDelete:
+                    for (int i = 0; i < selectedStudent.size(); i++) {
+                        StudentInAttendanceModel student1 = selectedStudent.get(i);
+                        deleteItem(student1);
+                    }
+                    selectedStudent.clear();
+                    finishActionMode();
+                    return true;
+            }
+            mode.finish();
+            return false;
+        }
+
+        @Override
+        public void onDestroyActionMode(ActionMode mode) {
+            selectedStudent.clear();
+            studentInAttendanceAdapter.clearSelectedItems();
+            studentInAttendanceAdapter.notifyDataSetChanged();
+            actionMode = null;
+        }
+    }
+
+    public void finishActionMode() {
+        if (actionMode != null) {
+            actionMode.finish();
+        }
+    }
+
+    private void selectAllNotes() {
+        for (int i = 0; i < rv_studentsAdded.getChildCount(); i++) {
+            RelativeLayout item = rv_studentsAdded.getChildAt(i).findViewById(R.id.item_relative_layout);
+            item.setBackgroundResource(R.drawable.selected_item_border);
+        }
+        selectedStudent.clear();
+        for (int i = 0; i < studentInAttendanceAdapter.getItemCount(); i++) {
+            selectedStudent.add(studentInAttendanceAdapter.getItem(i));
+            studentInAttendanceAdapter.addSelectedItem(i);
+        }
+        prepareActionModeMenu();
+        setCABTitle();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(@NonNull Menu menu) {
@@ -132,38 +249,23 @@ public class ClickedAttendance extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem changeDT = menu.findItem(R.id.menu_ChangeDT);
-        MenuItem delete = menu.findItem(R.id.menu_deleteItem);
         changeDT.setVisible(true);
-        delete.setVisible(true);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId())
-        {
-            case R.id.menu_selectAll:
-                StudentInAttendanceAdapter adapter = new StudentInAttendanceAdapter();
-                adapter.selectAll();
-                return true;
+        switch (item.getItemId()) {
             case R.id.menu_ChangeDT:
                 DialogFragment dateFragment = new DatePickerFragment();
                 dateFragment.show(getSupportFragmentManager(), "datePicker");
-                return true;
-            case R.id.menu_deleteItem:
-                for (int i = 0; i < selectedStudent.size(); i++)
-                {
-                    StudentInAttendanceModel student1 = selectedStudent.get(i);
-                    deleteItem(student1);
-                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    private void deleteItem(StudentInAttendanceModel student)
-    {
+    private void deleteItem(StudentInAttendanceModel student) {
         StudentInAttendanceVM studentInAttendanceVM = new StudentInAttendanceVM(application);
         studentInAttendanceVM.delete(student);
     }
@@ -172,6 +274,7 @@ public class ClickedAttendance extends BaseActivity {
     public static class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
@@ -185,7 +288,7 @@ public class ClickedAttendance extends BaseActivity {
         }
 
         public void onDateSet(DatePicker view, int year, int month, int day) {
-            newDate = String.valueOf(day) + "/" + String.valueOf(month+1) + "/" + String.valueOf(year);
+            newDate = String.valueOf(day) + "/" + String.valueOf(month + 1) + "/" + String.valueOf(year);
 
             //start time picker
             DialogFragment timeFragment = new TimePickerFragment();
@@ -197,6 +300,7 @@ public class ClickedAttendance extends BaseActivity {
     public static class TimePickerFragment extends DialogFragment
             implements TimePickerDialog.OnTimeSetListener {
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current time as the default values for the picker
@@ -235,17 +339,17 @@ public class ClickedAttendance extends BaseActivity {
         if (mFragmentManager.getBackStackEntryCount() > 0) {
             mFragmentManager.popBackStackImmediate();
             initUI();
-        }
-        else
-        {
+        } else {
             super.onBackPressed();
+
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
     }
 
     @Override
     public boolean onSupportNavigateUp() {
-        finish();
+        finishActionMode();
+        onBackPressed();
         return true;
     }
 }
