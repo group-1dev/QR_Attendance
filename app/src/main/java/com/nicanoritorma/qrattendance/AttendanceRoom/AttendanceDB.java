@@ -11,6 +11,9 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
 @Database(entities = {AttendanceModel.class}, version = 1)
 public abstract class AttendanceDB extends RoomDatabase {
 

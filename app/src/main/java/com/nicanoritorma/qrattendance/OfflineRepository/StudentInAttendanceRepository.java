@@ -1,8 +1,11 @@
 package com.nicanoritorma.qrattendance.OfflineRepository;
 
 import android.app.Application;
-import android.database.Cursor;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.os.Handler;
+import android.os.Looper;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.sqlite.db.SimpleSQLiteQuery;
@@ -11,7 +14,11 @@ import com.nicanoritorma.qrattendance.ClickedAttendanceRoom.StudentInAttendanceD
 import com.nicanoritorma.qrattendance.ClickedAttendanceRoom.StudentInAttendanceDB;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class StudentInAttendanceRepository {
 
@@ -25,91 +32,66 @@ public class StudentInAttendanceRepository {
 
     public void insert(StudentInAttendanceModel student)
     {
-        new InsertStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
+        Insert(studentInAttendanceDAO, student);
     }
 
     public void update(StudentInAttendanceModel student)
     {
-        new UpdateStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
+        Update(studentInAttendanceDAO, student);
     }
 
     public void delete(StudentInAttendanceModel student)
     {
-        new DeleteStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute(student);
+        Delete(studentInAttendanceDAO, student);
     }
 
     public void deleteAllStudentInAttendance()
     {
-        new DeleteAllStudentInAttendanceAsyncTask(studentInAttendanceDAO).execute();
+        DeleteAll(studentInAttendanceDAO);
     }
 
-    public LiveData<List<StudentInAttendanceModel>> getStudentsInAttendance(SimpleSQLiteQuery query)
+    public LiveData<List<StudentInAttendanceModel>> getStudentsInAttendance(int id)
     {
-        return studentInAttendanceDAO.getStudents(query);
+        return studentInAttendanceDAO.getStudents(id);
     }
 
-    public Cursor getAttendanceContent(int id)
-    {
-        return studentInAttendanceDAO.getAttendanceContent(id);
+    private void Insert(StudentInAttendanceDAO studentDAO, StudentInAttendanceModel student) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                studentDAO.insert(student);
+            }
+        });
     }
 
-    private static class InsertStudentInAttendanceAsyncTask extends AsyncTask<StudentInAttendanceModel, Void, Void> {
-        private StudentInAttendanceDAO student;
-
-        private InsertStudentInAttendanceAsyncTask(StudentInAttendanceDAO student)
-        {
-            this.student = student;
-        }
-
-        @Override
-        protected Void doInBackground(StudentInAttendanceModel... studentInAttendanceModels) {
-            student.insert(studentInAttendanceModels[0]);
-            return null;
-        }
+    private void Update(StudentInAttendanceDAO studentDAO, StudentInAttendanceModel student) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                studentDAO.update(student);
+            }
+        });
     }
 
-    private static class UpdateStudentInAttendanceAsyncTask extends AsyncTask<StudentInAttendanceModel, Void, Void> {
-        private StudentInAttendanceDAO student;
-
-        private UpdateStudentInAttendanceAsyncTask(StudentInAttendanceDAO student)
-        {
-            this.student = student;
-        }
-
-        @Override
-        protected Void doInBackground(StudentInAttendanceModel... studentInAttendanceModels) {
-            student.update(studentInAttendanceModels[0]);
-            return null;
-        }
+    private void Delete(StudentInAttendanceDAO studentDAO, StudentInAttendanceModel student) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                studentDAO.delete(student);
+            }
+        });
     }
 
-    private static class DeleteStudentInAttendanceAsyncTask extends AsyncTask<StudentInAttendanceModel, Void, Void> {
-        private StudentInAttendanceDAO student;
-
-        private DeleteStudentInAttendanceAsyncTask(StudentInAttendanceDAO student)
-        {
-            this.student = student;
-        }
-
-        @Override
-        protected Void doInBackground(StudentInAttendanceModel... studentInAttendanceModels) {
-            student.delete(studentInAttendanceModels[0]);
-            return null;
-        }
-    }
-
-    private static class DeleteAllStudentInAttendanceAsyncTask extends AsyncTask<Void, Void, Void> {
-        private StudentInAttendanceDAO student;
-
-        private DeleteAllStudentInAttendanceAsyncTask(StudentInAttendanceDAO student)
-        {
-            this.student = student;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            student.deleteAllStudent();
-            return null;
-        }
+    private void DeleteAll(StudentInAttendanceDAO studentDAO) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                studentDAO.deleteAllStudent();
+            }
+        });
     }
 }

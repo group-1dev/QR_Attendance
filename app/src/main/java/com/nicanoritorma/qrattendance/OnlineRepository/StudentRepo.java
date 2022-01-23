@@ -10,7 +10,7 @@ import androidx.lifecycle.LiveData;
 import com.nicanoritorma.qrattendance.BaseActivity;
 import com.nicanoritorma.qrattendance.api.GetStudentOnline;
 import com.nicanoritorma.qrattendance.api.PutData;
-import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.model.QrModel;
 
 import java.util.List;
 public class StudentRepo extends BaseActivity {
@@ -23,7 +23,7 @@ public class StudentRepo extends BaseActivity {
         studentList = new GetStudentOnline(application);
     }
 
-    public void insert(StudentModel student) {
+    public void insert(QrModel student) {
         new InsertStudentToDb(application, student.getName(), student.getIdNum(), student.getCollege(), student.getQrCode()).execute();
     }
 
@@ -78,7 +78,7 @@ public class StudentRepo extends BaseActivity {
         }
     }
 
-    public LiveData<List<StudentModel>> getStudentList() {
+    public LiveData<List<QrModel>> getStudentList() {
         return studentList.getStudentList();
     }
 }

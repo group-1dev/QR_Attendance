@@ -7,9 +7,13 @@ import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 import com.nicanoritorma.qrattendance.AttendanceRoom.AttendanceDAO;
 import com.nicanoritorma.qrattendance.AttendanceRoom.AttendanceDB;
+import com.nicanoritorma.qrattendance.ClickedAttendanceRoom.StudentInAttendanceDAO;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
+import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class AttendanceRepository {
 
@@ -25,12 +29,12 @@ public class AttendanceRepository {
 
     public void insert(AttendanceModel attendance)
     {
-        new InsertAttendanceAsyncTask(attendanceDAO).execute(attendance);
+        Insert(attendanceDAO, attendance);
     }
 
     public void update(AttendanceModel attendance)
     {
-        new UpdateAttendanceAsyncTask(attendanceDAO).execute(attendance);
+        Update(attendanceDAO, attendance);
     }
 
     public void updateTime(int id, String date, String time)
@@ -45,16 +49,27 @@ public class AttendanceRepository {
 
     public void delete(AttendanceModel attendance)
     {
-        new DeleteAttendanceAsyncTask(attendanceDAO).execute(attendance);
+        Delete(attendanceDAO, attendance);
     }
 
     public void deleteAllAttendance()
     {
-        new DeleteAllAttendanceAsyncTask(attendanceDAO).execute();
+        DeleteAll(attendanceDAO);
     }
 
     public LiveData<List<AttendanceModel>> getAttendanceList() {
         return attendanceList;
+    }
+
+    //Insert new Attendance
+    private void Insert(AttendanceDAO attendanceDAO, AttendanceModel attendance) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                attendanceDAO.insert(attendance);
+            }
+        });
     }
 
     private static class UpdateTimeAsyncTask extends AsyncTask<Void, Void, Void>
@@ -78,63 +93,33 @@ public class AttendanceRepository {
         }
     }
 
-    private static class InsertAttendanceAsyncTask extends AsyncTask<AttendanceModel, Void, Void> {
-        private AttendanceDAO attendanceDAO;
-
-        private InsertAttendanceAsyncTask(AttendanceDAO attendanceDAO)
-        {
-            this.attendanceDAO = attendanceDAO;
-        }
-
-        @Override
-        protected Void doInBackground(AttendanceModel... attendanceModels) {
-            attendanceDAO.insert(attendanceModels[0]);
-            return null;
-        }
+    private void Update(AttendanceDAO attendanceDAO, AttendanceModel attendance) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                attendanceDAO.update(attendance);
+            }
+        });
     }
 
-    private static class UpdateAttendanceAsyncTask extends AsyncTask<AttendanceModel, Void, Void> {
-        private AttendanceDAO attendanceDAO;
-
-        private UpdateAttendanceAsyncTask(AttendanceDAO attendanceDAO)
-        {
-            this.attendanceDAO = attendanceDAO;
-        }
-
-        @Override
-        protected Void doInBackground(AttendanceModel... attendanceModels) {
-            attendanceDAO.update(attendanceModels[0]);
-            return null;
-        }
+    private void Delete(AttendanceDAO attendanceDAO, AttendanceModel attendance) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                attendanceDAO.delete(attendance);
+            }
+        });
     }
 
-    private static class DeleteAttendanceAsyncTask extends AsyncTask<AttendanceModel, Void, Void> {
-        private AttendanceDAO attendanceDAO;
-
-        private DeleteAttendanceAsyncTask(AttendanceDAO attendanceDAO)
-        {
-            this.attendanceDAO = attendanceDAO;
-        }
-
-        @Override
-        protected Void doInBackground(AttendanceModel... attendanceModels) {
-            attendanceDAO.delete(attendanceModels[0]);
-            return null;
-        }
-    }
-
-    private static class DeleteAllAttendanceAsyncTask extends AsyncTask<Void, Void, Void> {
-        private AttendanceDAO attendanceDAO;
-
-        private DeleteAllAttendanceAsyncTask(AttendanceDAO attendanceDAO)
-        {
-            this.attendanceDAO = attendanceDAO;
-        }
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-            attendanceDAO.deleteAllStudent();
-            return null;
-        }
+    private void DeleteAll(AttendanceDAO attendanceDAO) {
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                attendanceDAO.deleteAllAttendance();
+            }
+        });
     }
 }

@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
 @Entity(tableName = "student_table")
-public class StudentModel {
+public class QrModel {
 
     @PrimaryKey(autoGenerate = true)
     private int id;
@@ -17,14 +17,14 @@ public class StudentModel {
 
     private String qrCode;
 
-    public StudentModel(String name, String idNum, String college, String qrCode) {
+    public QrModel(String name, String idNum, String college, String qrCode) {
         this.name = name;
         this.college = college;
         this.idNum = idNum;
         this.qrCode = qrCode;
     }
 
-    public StudentModel() {}
+    //public StudentModel() {}
 
     public int getId() {
         return id;

@@ -8,14 +8,12 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.nicanoritorma.qrattendance.OnlineViewModels.GeneratedQrViewModel;
-import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.model.QrModel;
 import com.nicanoritorma.qrattendance.OfflineViewModels.QrViewModel;
 import com.nicanoritorma.qrattendance.utils.Connectivity;
 
@@ -27,6 +25,7 @@ public class CreateQr extends BaseActivity {
     private MaterialButton btn_generate, btn_saveQr;
     private EditText et_fullname, et_idNum, et_dept;
     private ImageView iv_qr;
+    private final String BLANK_FIELD_ERROR = "Required Field";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +45,23 @@ public class CreateQr extends BaseActivity {
     private void initUI() {
         ActionBar ab = getSupportActionBar();
         ab.setTitle("Create QR Code");
-        btn_generate.setOnClickListener(view -> genQr(getData()[0], getData()[1]));
+        btn_generate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (getData()[0].isEmpty())
+                {
+                    et_fullname.setError(BLANK_FIELD_ERROR);
+                }
+                else if (getData()[1].isEmpty())
+                {
+                    et_idNum.setError(BLANK_FIELD_ERROR);
+                }
+                else
+                {
+                    genQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1]);
+                }
+            }
+        });
         btn_saveQr.setOnClickListener(view -> {
             iv_qr.setDrawingCacheEnabled(true);
             Bitmap bitmap = iv_qr.getDrawingCache();
@@ -101,7 +116,7 @@ public class CreateQr extends BaseActivity {
 
         //offline db
         QrViewModel qrViewModel = new QrViewModel(getApplication());
-        qrViewModel.insert(new StudentModel(fullname, idNum, dept, qrCode));
+        qrViewModel.insert(new QrModel(fullname, idNum, dept, qrCode));
 
         et_fullname.setText("");
         et_idNum.setText("");

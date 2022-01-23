@@ -29,6 +29,7 @@ public class QrScanner extends Fragment {
 
     private static final int REQUEST_PERMISSION_CAMERA = 100;
     private CodeScanner mCodeScanner;
+    private Toast toast;
 
     public QrScanner() {
         super(R.layout.activity_qr_scanner);
@@ -57,7 +58,8 @@ public class QrScanner extends Fragment {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(activity, arrOfStr[0] + " is successfully added.", Toast.LENGTH_SHORT).show();
+                            toast = Toast.makeText(activity, arrOfStr[0] + " is successfully added.", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     });
                 }catch (Exception e)
@@ -65,7 +67,8 @@ public class QrScanner extends Fragment {
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            Toast.makeText(requireContext(), "QR cannot be read, try again", Toast.LENGTH_SHORT).show();
+                            toast = Toast.makeText(activity, "QR cannot be read, try again", Toast.LENGTH_SHORT);
+                            toast.show();
                         }
                     });
 
@@ -75,6 +78,9 @@ public class QrScanner extends Fragment {
         scannerView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (toast != null) {
+                    toast.cancel();
+                }
                 mCodeScanner.startPreview();
             }
         });

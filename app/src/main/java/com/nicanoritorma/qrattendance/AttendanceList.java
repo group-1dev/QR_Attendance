@@ -1,18 +1,16 @@
 package com.nicanoritorma.qrattendance;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.documentfile.provider.DocumentFile;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Application;
 import android.content.Intent;
-import android.database.Cursor;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
-import android.util.Log;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,15 +24,14 @@ import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.ui.adapter.AttendanceAdapter;
-import com.nicanoritorma.qrattendance.utils.CSV_Writer;
 import com.nicanoritorma.qrattendance.utils.RecyclerViewItemClickSupport;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class AttendanceList extends BaseActivity {
 
@@ -42,7 +39,10 @@ public class AttendanceList extends BaseActivity {
     private AttendanceAdapter attendanceAdapter;
     private ActionMode actionMode;
     private final List<AttendanceModel> selectedAttendance = new ArrayList<>();
+    private final ArrayList<String> itemInAttendance = new ArrayList<>();
     private static Application application;
+    private String attendanceName;
+    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,8 +55,7 @@ public class AttendanceList extends BaseActivity {
         initUI();
     }
 
-    private void initUI()
-    {
+    private void initUI() {
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle("Attendance List");
@@ -104,8 +103,7 @@ public class AttendanceList extends BaseActivity {
         });
     }
 
-    public void toggleListViewItem(View view, int position)
-    {
+    public void toggleListViewItem(View view, int position) {
         AttendanceModel attendance = attendanceAdapter.getItem(position);
         RelativeLayout item = view.findViewById(R.id.item_relative_layout);
 
@@ -127,11 +125,9 @@ public class AttendanceList extends BaseActivity {
         setCABTitle();
     }
 
-    private void prepareActionModeMenu()
-    {
+    private void prepareActionModeMenu() {
         Menu menu = actionMode.getMenu();
-        if (attendanceAdapter.getItemCount() > 1)
-        {
+        if (attendanceAdapter.getItemCount() > 1) {
             menu.findItem(R.id.menuActionSelectAll).setVisible(true);
 
         }
@@ -146,8 +142,7 @@ public class AttendanceList extends BaseActivity {
         }
     }
 
-    private List<AttendanceModel> getSelectedAttendance()
-    {
+    private List<AttendanceModel> getSelectedAttendance() {
         return selectedAttendance;
     }
 
@@ -203,14 +198,12 @@ public class AttendanceList extends BaseActivity {
                     finishActionMode();
                     return true;
                 case R.id.menu_saveToDevice:
-                    String attendanceName = "";
+                    showProgressBar(true);
                     int id = 0;
-                    for (int i = 0; i < selectedAttendance.size(); i++) {
-                        AttendanceModel attendance = selectedAttendance.get(i);
-                        attendanceName = attendance.getAttendanceName();
-                        id = attendance.getId();
-                    }
-                    new exportAttendance(id, attendanceName).execute();
+                    attendanceName = selectedAttendance.get(0).getAttendanceName();
+                    id = selectedAttendance.get(0).getId();
+
+                    prepareData(id);
                     return true;
             }
             mode.finish();
@@ -226,60 +219,76 @@ public class AttendanceList extends BaseActivity {
         }
     }
 
+    private void prepareData(int parentId) {
+        StudentInAttendanceVM student = new StudentInAttendanceVM(application);
+        student.getStudentList(parentId).observe(this, new Observer<List<StudentInAttendanceModel>>() {
+            @Override
+            public void onChanged(List<StudentInAttendanceModel> studentInAttendanceModels) {
+                for (StudentInAttendanceModel student : studentInAttendanceModels) {
+                    itemInAttendance.add(student.getFullname() + ";" + student.getIdNum());
+                }
+            }
+        });
+        exportDataToCSV();
+    }
+
     /*
         Attendance will be saved to device storage
-     */
-    private static class exportAttendance extends AsyncTask<Void, Void, Void>
-    {
-        String attendanceName;
-        int attendanceId;
+    */
+    private void exportDataToCSV() {
+        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        String uniqueFileName = attendanceName + ".csv";
+        File dir = new File(directory.getAbsolutePath() + "/QR_attendance/Attendance");
+        if (!dir.exists())
+            dir.mkdirs();
 
-        @Override
-        protected void onPreExecute() {
-            Log.d("onPreExecute: ", "Im here");
-            showProgressBar(true);
-//            String filename = attendanceName + ".csv";
-//            Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType(".csv -> text/plain")
-//                    .putExtra(Intent.EXTRA_TITLE, filename).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//            application.startActivity(intent);
-        }
+        Executor executor = Executors.newSingleThreadExecutor(); // change according to your requirements
+        Handler handler = new Handler(Looper.getMainLooper());
 
-        public exportAttendance(int id, String attendanceName) {
-            this.attendanceId = id;
-            this.attendanceName = attendanceName;
-        }
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                StringBuilder csvData = new StringBuilder();
 
-        @Override
-        protected Void doInBackground(Void... voids) {
+                for (int i = 0; i < itemInAttendance.size(); i++) {
 
-//            try {
-                //CSV_Writer csvWriter = new CSV_Writer(new FileWriter(file));
-                StudentInAttendanceVM students = new StudentInAttendanceVM(application);
-                Cursor cursor = students.getAttendanceContent(attendanceId);
+                    String currentLIne = itemInAttendance.get(i);
+                    String[] cells = currentLIne.split(";");
 
-                //csvWriter.writeNext(cursor.getColumnNames());
-                while (cursor.moveToNext()) {
-                    String[] arr = new String[cursor.getColumnNames().length];
-                    for (int i = 0; i < cursor.getColumnNames().length; i++) {
-                        arr[i] = cursor.getString(i);
-                        Log.d("doInBackground: ", arr[i]);
-                    }
-                    //csvWriter.writeNext(arr);
+                    csvData.append(toCSV(cells)).append("\n");
                 }
-                //csvWriter.close();
-                cursor.close();
-//            }
-//            catch (IOException e) {
-//                Log.d( "doInBackground: ", e.toString());
-//                Log.d("doInBackground: ", "Error saving to device");
-//            }
-            return null;
-        }
+                //recall method again to write data on created file
+                exportDataToCSV();
+                try {
+                    file = new File(dir, uniqueFileName);
+                    FileWriter fileWriter = new FileWriter(file);
+                    fileWriter.write(csvData.toString());
+                    fileWriter.flush();
+                    fileWriter.close();
+                } catch (Exception e) {
+                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                }
 
-        @Override
-        protected void onPostExecute(Void unused) {
-            showProgressBar(false);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        showProgressBar(false);
+                    }
+                });
+            }
+        });
+    }
+
+    public static String toCSV(String[] array) {
+        String result = "";
+        if (array.length > 0) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : array) {
+                sb.append(s.trim()).append(",");
+            }
+            result = sb.deleteCharAt(sb.length() - 1).toString();
         }
+        return result;
     }
 
     private void deleteItem(AttendanceModel attendance) {
@@ -287,8 +296,7 @@ public class AttendanceList extends BaseActivity {
         attendanceVM.delete(attendance);
     }
 
-    private void openClickedAttendance(AttendanceModel attendance)
-    {
+    private void openClickedAttendance(AttendanceModel attendance) {
         Intent intent = new Intent(AttendanceList.this, ClickedAttendance.class);
         intent.putExtra("ITEM_ID", attendance.getId());
         intent.putExtra(ClickedAttendance.EXTRA_ATTENDANCE_NAME, attendance.getAttendanceName());
