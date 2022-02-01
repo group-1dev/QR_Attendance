@@ -5,12 +5,14 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -28,9 +30,12 @@ import com.nicanoritorma.qrattendance.utils.RecyclerViewItemClickSupport;
 
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class AttendanceList extends BaseActivity {
@@ -198,12 +203,16 @@ public class AttendanceList extends BaseActivity {
                     finishActionMode();
                     return true;
                 case R.id.menu_saveToDevice:
-                    showProgressBar(true);
-                    int id = 0;
-                    attendanceName = selectedAttendance.get(0).getAttendanceName();
-                    id = selectedAttendance.get(0).getId();
-
-                    prepareData(id);
+                    showToast("Feature unavailable");
+                    /**
+                     * code is temporarily commented until error's fixed
+                     */
+//                    showProgressBar(true);
+//                    int id = 0;
+//                    attendanceName = selectedAttendance.get(0).getAttendanceName();
+//                    id = selectedAttendance.get(0).getId();
+//                    prepareData(id);
+                    finishActionMode();
                     return true;
             }
             mode.finish();
@@ -232,18 +241,19 @@ public class AttendanceList extends BaseActivity {
         exportDataToCSV();
     }
 
-    /*
+    /**
         Attendance will be saved to device storage
+
+        This has errors, i cant fix
     */
     private void exportDataToCSV() {
         File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         String uniqueFileName = attendanceName + ".csv";
-        File dir = new File(directory.getAbsolutePath() + "/QR_attendance/Attendance");
-        if (!dir.exists())
-            dir.mkdirs();
-
-        Executor executor = Executors.newSingleThreadExecutor(); // change according to your requirements
-        Handler handler = new Handler(Looper.getMainLooper());
+//        File dir = new File(directory.getAbsolutePath() + "/QR_attendance/Attendance", uniqueFileName);
+        if (!directory.exists())
+            directory.mkdirs();
+        file = new File(directory, uniqueFileName);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
 
         executor.execute(new Runnable() {
             @Override
@@ -259,25 +269,21 @@ public class AttendanceList extends BaseActivity {
                 }
                 //recall method again to write data on created file
                 exportDataToCSV();
+
                 try {
-                    file = new File(dir, uniqueFileName);
                     FileWriter fileWriter = new FileWriter(file);
                     fileWriter.write(csvData.toString());
                     fileWriter.flush();
                     fileWriter.close();
                 } catch (Exception e) {
-                    Toast.makeText(getApplicationContext(), e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                    e.printStackTrace();
                 }
-
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        showProgressBar(false);
-                    }
-                });
             }
         });
+        executor.shutdown();
+        showProgressBar(false);
     }
+
 
     public static String toCSV(String[] array) {
         String result = "";

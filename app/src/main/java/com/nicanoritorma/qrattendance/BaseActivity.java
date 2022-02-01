@@ -4,6 +4,7 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -33,6 +34,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static void showProgressBar(boolean visibility)
     {
         progressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
+    }
+
+    public void showToast(final String toast)
+    {
+        Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
     }
 
 //    public void testConnect()

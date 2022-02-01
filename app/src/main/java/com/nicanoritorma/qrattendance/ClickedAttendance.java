@@ -344,7 +344,6 @@ public class ClickedAttendance extends BaseActivity {
             initUI();
         } else {
             super.onBackPressed();
-
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
         }
     }
