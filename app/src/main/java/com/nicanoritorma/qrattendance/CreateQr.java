@@ -44,7 +44,6 @@ public class CreateQr extends BaseActivity {
         initUI();
     }
 
-
     private void initUI() {
         ActionBar ab = getSupportActionBar();
         ab.setTitle("Create QR Code");

@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.Observer;
@@ -249,7 +250,6 @@ public class GeneratedQr extends BaseActivity {
                 contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/" + "QR_Attendance/QR_Codes");
                 Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
                 fos = resolver.openOutputStream(imageUri);
-
             } else {
                 String imagesDir = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_PICTURES).toString() + File.separator + "QR_Attendance";
@@ -257,18 +257,19 @@ public class GeneratedQr extends BaseActivity {
                 File file = new File(imagesDir);
 
                 if (!file.exists()) {
-                    file.mkdir();
+                    file.mkdirs();
                 }
 
                 File image = new File(imagesDir, idNum + ".png");
                 fos = new FileOutputStream(image);
-
             }
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();
+            Toast.makeText(getApplicationContext(), "QR successfully saved", Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Error saving QR: " + e.toString(), Toast.LENGTH_SHORT).show();
         }
     }
 }
