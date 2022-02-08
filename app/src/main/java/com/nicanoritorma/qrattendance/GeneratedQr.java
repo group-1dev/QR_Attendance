@@ -1,6 +1,5 @@
 package com.nicanoritorma.qrattendance;
 
-import static kotlinx.coroutines.CoroutineScopeKt.CoroutineScope;
 
 import android.content.ContentResolver;
 import android.content.ContentValues;
@@ -28,6 +27,7 @@ import com.nicanoritorma.qrattendance.OfflineViewModels.QrViewModel;
 import com.nicanoritorma.qrattendance.OnlineViewModels.GeneratedQrViewModel;
 import com.nicanoritorma.qrattendance.model.QrModel;
 import com.nicanoritorma.qrattendance.ui.adapter.QrAdapter;
+import com.nicanoritorma.qrattendance.utils.EncryptorAndDecryptor;
 import com.nicanoritorma.qrattendance.utils.RecyclerViewItemClickSupport;
 
 import java.io.File;
@@ -35,12 +35,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import kotlinx.coroutines.Dispatchers;
 
 public class GeneratedQr extends BaseActivity {
 
@@ -59,8 +55,7 @@ public class GeneratedQr extends BaseActivity {
         initUI();
     }
 
-    private void initUI()
-    {
+    private void initUI() {
         ActionBar ab = getSupportActionBar();
         if (ab != null) {
             ab.setTitle("Generated QR Codes");
@@ -205,12 +200,12 @@ public class GeneratedQr extends BaseActivity {
                     finishActionMode();
                     return true;
                 case R.id.menu_saveToDevice:
-                    String idNum = selectedItem.get(0).getIdNum();
-                    String qrCode = selectedItem.get(0).getQrCode();
-                    try {
-                        saveQrToLocal(idNum, qrCode);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                    for (int i = 0; i < selectedItem.size(); ++i) {
+                        String idNum = selectedItem.get(i).getIdNum();
+                        String qrCode = selectedItem.get(i).getQrCode();
+                        String decryptedData = EncryptorAndDecryptor.decrypt(qrCode);
+
+                        saveQrToLocal(idNum, decryptedData);
                     }
                     finishActionMode();
                     return true;
@@ -240,36 +235,40 @@ public class GeneratedQr extends BaseActivity {
         return true;
     }
 
-    private void saveQrToLocal(String idNum, String qrCode) throws IOException {
-        byte [] data = Base64.decode(qrCode,Base64.DEFAULT);
+    private void saveQrToLocal(String idNum, String qrCode) {
+        byte[] data = Base64.decode(qrCode, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
 
         OutputStream fos;
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                ContentResolver resolver = getApplicationContext().getContentResolver();
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, idNum);
+                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/" + "QR_Attendance/QR_Codes");
+                Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+                fos = resolver.openOutputStream(imageUri);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            ContentResolver resolver = getApplicationContext().getContentResolver();
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, idNum);
-            contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
-            contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/" + "QR_Attendance/QR_Codes");
-            Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-            fos = resolver.openOutputStream(imageUri);
-        } else {
-            String imagesDir = Environment.getExternalStoragePublicDirectory(
-                    Environment.DIRECTORY_PICTURES).toString() + File.separator + "QR_Attendance";
+            } else {
+                String imagesDir = Environment.getExternalStoragePublicDirectory(
+                        Environment.DIRECTORY_PICTURES).toString() + File.separator + "QR_Attendance";
 
-            File file = new File(imagesDir);
+                File file = new File(imagesDir);
 
-            if (!file.exists()) {
-                file.mkdir();
+                if (!file.exists()) {
+                    file.mkdir();
+                }
+
+                File image = new File(imagesDir, idNum + ".png");
+                fos = new FileOutputStream(image);
+
             }
-
-            File image = new File(imagesDir, idNum + ".png");
-            fos = new FileOutputStream(image);
-
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        fos.flush();
-        fos.close();
     }
 }

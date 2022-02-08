@@ -5,21 +5,16 @@ import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.app.Activity;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
-import android.os.Looper;
-import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
 import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
@@ -33,10 +28,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class AttendanceList extends BaseActivity {
 
@@ -47,7 +38,6 @@ public class AttendanceList extends BaseActivity {
     private final ArrayList<String> itemInAttendance = new ArrayList<>();
     private static Application application;
     private String attendanceName;
-    private File file;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,15 +193,9 @@ public class AttendanceList extends BaseActivity {
                     finishActionMode();
                     return true;
                 case R.id.menu_saveToDevice:
-                    showToast("Feature unavailable");
-                    /**
-                     * code is temporarily commented until error's fixed
-                     */
-//                    showProgressBar(true);
-//                    int id = 0;
-//                    attendanceName = selectedAttendance.get(0).getAttendanceName();
-//                    id = selectedAttendance.get(0).getId();
-//                    prepareData(id);
+                    int id = selectedAttendance.get(0).getId();
+                    attendanceName = selectedAttendance.get(0).getAttendanceName();
+                    prepareData(id);
                     finishActionMode();
                     return true;
             }
@@ -238,50 +222,37 @@ public class AttendanceList extends BaseActivity {
                 }
             }
         });
-        exportDataToCSV();
+        try {
+            exportDataToCSV(attendanceName);
+        } catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
     }
 
     /**
         Attendance will be saved to device storage
 
-        This has errors, i cant fix
+        TODO: This has errors, i cant fix
+            - The file is created but no content
     */
-    private void exportDataToCSV() {
-        File directory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        String uniqueFileName = attendanceName + ".csv";
-//        File dir = new File(directory.getAbsolutePath() + "/QR_attendance/Attendance", uniqueFileName);
-        if (!directory.exists())
-            directory.mkdirs();
-        file = new File(directory, uniqueFileName);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+    private void exportDataToCSV(String attendanceName) throws IOException {
+        String attendanceDir = Environment.getExternalStoragePublicDirectory(
+                Environment.DIRECTORY_DOWNLOADS).toString() + File.separator + "QR_Attendance/Attendance";
+        File file = new File(attendanceDir);
+        if (!file.exists())
+            file.mkdirs();
 
-        executor.execute(new Runnable() {
-            @Override
-            public void run() {
-                StringBuilder csvData = new StringBuilder();
-
-                for (int i = 0; i < itemInAttendance.size(); i++) {
-
-                    String currentLIne = itemInAttendance.get(i);
-                    String[] cells = currentLIne.split(";");
-
-                    csvData.append(toCSV(cells)).append("\n");
-                }
-                //recall method again to write data on created file
-                exportDataToCSV();
-
-                try {
-                    FileWriter fileWriter = new FileWriter(file);
-                    fileWriter.write(csvData.toString());
-                    fileWriter.flush();
-                    fileWriter.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        executor.shutdown();
-        showProgressBar(false);
+        File attendance = new File(attendanceDir, attendanceName + ".csv");
+        FileWriter writer = new FileWriter(attendance);
+        for (int i = 0; i < itemInAttendance.size(); i++) {
+            String currentLine = itemInAttendance.get(i);
+            String[] cells = currentLine.split(";");
+            writer.write(toCSV(cells)+"\n");
+        }
+        writer.flush();
+        writer.close();
     }
 
 

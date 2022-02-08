@@ -5,9 +5,11 @@ import androidx.appcompat.app.ActionBar;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.zxing.BarcodeFormat;
@@ -16,6 +18,7 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.nicanoritorma.qrattendance.model.QrModel;
 import com.nicanoritorma.qrattendance.OfflineViewModels.QrViewModel;
 import com.nicanoritorma.qrattendance.utils.Connectivity;
+import com.nicanoritorma.qrattendance.utils.EncryptorAndDecryptor;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
@@ -58,7 +61,7 @@ public class CreateQr extends BaseActivity {
                 }
                 else
                 {
-                    genQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1]);
+                    generateQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1]);
                 }
             }
         });
@@ -70,7 +73,7 @@ public class CreateQr extends BaseActivity {
 
     }
 
-    //get data from edittexts
+    //get data from edit texts
     private String[] getData() {
         String fullname = et_fullname.getText().toString().trim();
         String idNum = et_idNum.getText().toString().trim();
@@ -79,14 +82,16 @@ public class CreateQr extends BaseActivity {
         return new String[]{fullname, idNum, department};
     }
 
+
     //generate qr code
-    private void genQr(String fullname, String idNum) {
+    private void generateQr(String fullname, String idNum) {
         BitMatrix bitMatrix;
         Bitmap bitmap;
+        String encryptedData = EncryptorAndDecryptor.encrypt(fullname+"&"+idNum);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
         try {
-            bitMatrix = qrCodeWriter.encode(fullname+"&"+idNum, BarcodeFormat.QR_CODE, 250, 250);
+            bitMatrix = qrCodeWriter.encode(encryptedData != null ? encryptedData : fullname+"&"+idNum, BarcodeFormat.QR_CODE, 250, 250);
             bitmap = Bitmap.createBitmap(250, 250, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < 250; x++) {
@@ -101,22 +106,22 @@ public class CreateQr extends BaseActivity {
             btn_saveQr.setVisibility(View.VISIBLE);
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(getApplicationContext(), "Error: Try again", Toast.LENGTH_SHORT).show();
         }
     }
 
     //save qr to local db if no internet or to online db if internet is available
     private void saveQr(String fullname, String idNum, String dept, Bitmap bitmap) {
-        String SAVE_ERROR = "Error occurred";
-        boolean isConnectedFast = Connectivity.isConnectedFast(getApplicationContext());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 99, bos);
         byte[] qr = bos.toByteArray();
         String qrCode = Base64.getEncoder().encodeToString(qr);
+        String encryptedData = EncryptorAndDecryptor.encrypt(qrCode);
 
         //offline db
         QrViewModel qrViewModel = new QrViewModel(getApplication());
-        qrViewModel.insert(new QrModel(fullname, idNum, dept, qrCode));
+        qrViewModel.insert(new QrModel(fullname, idNum, dept, encryptedData));
 
         et_fullname.setText("");
         et_idNum.setText("");

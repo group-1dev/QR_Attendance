@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.nicanoritorma.qrattendance.R;
 import com.nicanoritorma.qrattendance.model.QrModel;
+import com.nicanoritorma.qrattendance.utils.EncryptorAndDecryptor;
 
 import java.util.ArrayList;
 import java.util.Base64;
@@ -104,7 +105,8 @@ public class QrAdapter extends RecyclerView.Adapter<QrAdapter.QrAdapterVH> {
         {
             holder.iv_qrCode.setVisibility(View.VISIBLE);
             String qr = qrModel.getQrCode();
-            byte[] qrCode = Base64.getDecoder().decode(qr);
+            String decryptedData = EncryptorAndDecryptor.decrypt(qr);
+            byte[] qrCode = Base64.getDecoder().decode(decryptedData);
             holder.iv_qrCode.setImageBitmap(
                     BitmapFactory.decodeByteArray
                             (qrCode, 0, qrCode.length));

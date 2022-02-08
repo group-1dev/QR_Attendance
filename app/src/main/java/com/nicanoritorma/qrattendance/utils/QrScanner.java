@@ -50,7 +50,8 @@ public class QrScanner extends Fragment {
 
                 //add to offline list of students in clicked attendance
                 String resultText = result.getText();
-                String[] arrOfStr = resultText.split("&");
+                String decryptedData = EncryptorAndDecryptor.decrypt(resultText);
+                String[] arrOfStr = decryptedData != null ? decryptedData.split("&") : resultText.split("&");
 
                 StudentInAttendanceVM student = new StudentInAttendanceVM(activity.getApplication());
                 try {
@@ -64,6 +65,7 @@ public class QrScanner extends Fragment {
                     });
                 }catch (Exception e)
                 {
+                    e.printStackTrace();
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
