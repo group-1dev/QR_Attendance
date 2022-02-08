@@ -3,11 +3,6 @@ package com.nicanoritorma.qrattendance.api;
 import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
-import android.content.Context;
-import android.content.Intent;
-import android.os.AsyncTask;
-import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -16,8 +11,7 @@ import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.nicanoritorma.qrattendance.BaseActivity;
-import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.model.QrModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -28,7 +22,7 @@ import java.util.List;
 
 public class GetStudentOnline {
 
-    private MutableLiveData<List<StudentModel>> studentList;
+    private MutableLiveData<List<QrModel>> studentList;
     private RequestQueueSingleton requestQueueSingleton;
 
     public GetStudentOnline(Application application) {
@@ -36,14 +30,14 @@ public class GetStudentOnline {
         requestQueueSingleton = RequestQueueSingleton.getInstance(application);
     }
 
-    public LiveData<List<StudentModel>> getStudentList() {
+    public LiveData<List<QrModel>> getStudentList() {
         retrieveStudentListFromDb();
         return studentList;
     }
 
     public void retrieveStudentListFromDb()
     {
-        List<StudentModel> list = new ArrayList<>();
+        List<QrModel> list = new ArrayList<>();
         String URL = getDbUrl() + "GetStudentList.php";
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, URL, null, new Response.Listener<JSONObject>() {
@@ -58,7 +52,7 @@ public class GetStudentOnline {
                         String idNumber = data.getString("idNumber");
                         String college = data.getString("department");
                         String qrCode = data.getString("qrCode");
-                        list.add(new StudentModel(fullname, idNumber, college, qrCode));
+                        list.add(new QrModel(fullname, idNumber, college, qrCode));
                     }
                     studentList.postValue(list);
                 } catch (JSONException e) {

@@ -6,42 +6,38 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.nicanoritorma.qrattendance.model.StudentModel;
-import com.nicanoritorma.qrattendance.OfflineRepository.StudentRepository;
+import com.nicanoritorma.qrattendance.model.QrModel;
+import com.nicanoritorma.qrattendance.OfflineRepository.QrRepository;
 
 import java.util.List;
 
 public class QrViewModel extends AndroidViewModel {
 
-    private StudentRepository repository;
-    private LiveData<List<StudentModel>> allStudent;
+    private QrRepository repository;
+    private LiveData<List<QrModel>> allQr;
 
     public QrViewModel(@NonNull Application application) {
         super(application);
-        repository = new StudentRepository(application);
-        allStudent = repository.getAllStudent();
+        repository = new QrRepository(application);
+        allQr = repository.getAllStudent();
     }
 
-    public void insert(StudentModel student)
+    public void insert(QrModel qrItem)
     {
-        repository.insert(student);
+        repository.insert(qrItem);
     }
 
-    public void update(StudentModel student)
+    public void update(QrModel qrItem)
     {
-        repository.update(student);
+        repository.update(qrItem);
     }
 
-    public void delete(StudentModel student)
+    public void delete(QrModel qrItem)
     {
-        repository.delete(student);
+        repository.delete(qrItem);
     }
 
-    public void deleteAllNotes() {
-        repository.deleteAllStudent();
-    }
-
-    public LiveData<List<StudentModel>> getAllStudent() {
-        return allStudent;
+    public LiveData<List<QrModel>> getAllQr() {
+        return allQr;
     }
 }

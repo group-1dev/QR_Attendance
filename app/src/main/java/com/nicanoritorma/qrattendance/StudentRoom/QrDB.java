@@ -9,21 +9,21 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.model.QrModel;
 
-@Database(entities = {StudentModel.class}, version = 1)
-public abstract class StudentDB extends RoomDatabase {
+@Database(entities = {QrModel.class}, version = 1)
+public abstract class QrDB extends RoomDatabase {
 
-    private static StudentDB instance;
+    private static QrDB instance;
 
-    public abstract StudentDAO studentDAO();
+    public abstract QrDAO studentDAO();
 
-    public static synchronized StudentDB getInstance(Context context)
+    public static synchronized QrDB getInstance(Context context)
     {
         if (instance == null)
         {
             instance = Room.databaseBuilder(context.getApplicationContext(),
-                    StudentDB.class, "student_db")
+                    QrDB.class, "student_db")
                     .fallbackToDestructiveMigration()
                     .addCallback(roomCallback)
                     .build();
@@ -42,9 +42,9 @@ public abstract class StudentDB extends RoomDatabase {
 
     private static class PopulateDbAsyncTask extends AsyncTask<Void, Void, Void>
     {
-        private StudentDAO studentDAO;
+        private QrDAO studentDAO;
 
-        private PopulateDbAsyncTask(StudentDB db)
+        private PopulateDbAsyncTask(QrDB db)
         {
             studentDAO = db.studentDAO();
         }

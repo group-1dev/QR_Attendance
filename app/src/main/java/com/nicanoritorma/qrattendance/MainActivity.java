@@ -1,7 +1,12 @@
 package com.nicanoritorma.qrattendance;
 
+import static android.Manifest.permission.MANAGE_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
+
+import android.Manifest;
 import android.animation.LayoutTransition;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.transition.AutoTransition;
@@ -14,7 +19,10 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import org.xml.sax.XMLReader;
 
@@ -27,10 +35,13 @@ import java.net.URL;
 
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-
+/**
+    @author Nicanor Itorma
+ */
 public class MainActivity extends BaseActivity {
 
     private GridLayout drop_down;
+    private final int REQUEST_PERMISSION_STORAGE = 101;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,7 +50,23 @@ public class MainActivity extends BaseActivity {
 
         drop_down = findViewById(R.id.drop_down_gridView);
         drop_down.getLayoutTransition().enableTransitionType(LayoutTransition.CHANGING);
-//        testConnect();
+        if (ContextCompat.checkSelfPermission(getApplicationContext(), WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{WRITE_EXTERNAL_STORAGE}, REQUEST_PERMISSION_STORAGE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_PERMISSION_STORAGE) {
+            for (int p = 0; p < permissions.length; p++) {
+                if (WRITE_EXTERNAL_STORAGE.equals(permissions[p])) {
+                    if (grantResults[p] == PackageManager.PERMISSION_GRANTED) {
+                        Log.d("onRequestPermissionsResult: ", "Permission Granted");
+                    }
+                }
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     public void expandDropDown(View view) {
@@ -50,20 +77,21 @@ public class MainActivity extends BaseActivity {
 
     public void btn_createQr(View view) {
         startActivity(new Intent(this, CreateQr.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void btn_attendanceList(View view) {
         startActivity(new Intent(this, AttendanceList.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void btn_generatedQr(View view) {
         startActivity(new Intent(this, GeneratedQr.class));
-    }
-
-    public void btn_stats(View view) {
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 
     public void newAttendance(View view) {
         startActivity(new Intent(this, NewAttendance.class));
+        this.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
     }
 }

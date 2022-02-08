@@ -21,6 +21,11 @@ public class StudentInAttendanceModel {
         this.parentId = parentId;
     }
 
+    public StudentInAttendanceModel(String fullname, String idNum) {
+        this.fullname = fullname;
+        this.idNum = idNum;
+    }
+
     public String getFullname() {
         return fullname;
     }

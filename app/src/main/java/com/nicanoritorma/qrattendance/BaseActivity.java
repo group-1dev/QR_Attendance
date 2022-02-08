@@ -1,25 +1,21 @@
 package com.nicanoritorma.qrattendance;
 
-import android.os.AsyncTask;
+import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.io.File;
 
 public abstract class BaseActivity extends AppCompatActivity {
 
     private static CardView progressBar;
+    private static File dir;
     @Override
     public void setContentView(int layoutResID) {
         ConstraintLayout constraintLayout = (ConstraintLayout) getLayoutInflater().inflate(R.layout.activity_base, null);
@@ -38,6 +34,11 @@ public abstract class BaseActivity extends AppCompatActivity {
     public static void showProgressBar(boolean visibility)
     {
         progressBar.setVisibility(visibility ? View.VISIBLE : View.GONE);
+    }
+
+    public void showToast(final String toast)
+    {
+        Toast.makeText(getApplicationContext(), toast, Toast.LENGTH_SHORT).show();
     }
 
 //    public void testConnect()

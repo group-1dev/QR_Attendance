@@ -6,7 +6,7 @@ import android.app.Application;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.model.QrModel;
 import com.nicanoritorma.qrattendance.OnlineRepository.StudentRepo;
 
 import java.util.List;
@@ -21,10 +21,10 @@ public class GeneratedQrViewModel extends AndroidViewModel {
     }
 
     public void insert(String fullname, String idNum, String dept, String qrCode) {
-        onlineStudentRepo.insert(new StudentModel(fullname, idNum, dept, qrCode));
+        onlineStudentRepo.insert(new QrModel(fullname, idNum, dept, qrCode));
     }
 
-    public LiveData<List<StudentModel>> getStudentList() {
+    public LiveData<List<QrModel>> getStudentList() {
         return onlineStudentRepo.getStudentList();
     }
 }

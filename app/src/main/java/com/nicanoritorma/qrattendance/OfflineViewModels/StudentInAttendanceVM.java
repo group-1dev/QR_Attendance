@@ -1,22 +1,24 @@
 package com.nicanoritorma.qrattendance.OfflineViewModels;
 
 import android.app.Application;
+import android.database.Cursor;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.sqlite.db.SimpleSQLiteQuery;
 
 import com.nicanoritorma.qrattendance.OfflineRepository.StudentInAttendanceRepository;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class StudentInAttendanceVM extends AndroidViewModel {
 
     private StudentInAttendanceRepository repository;
-    private LiveData<List<StudentInAttendanceModel>> studentList;
 
     public StudentInAttendanceVM(@NonNull Application application) {
         super(application);
@@ -41,14 +43,8 @@ public class StudentInAttendanceVM extends AndroidViewModel {
         repository.deleteAllStudentInAttendance();
     }
 
-    public LiveData<List<StudentInAttendanceModel>> getAllStudentInAttendance() {
-        return studentList;
-    }
-
     public LiveData<List<StudentInAttendanceModel>> getStudentList(int parentId)
     {
-        SimpleSQLiteQuery query = new SimpleSQLiteQuery("SELECT * FROM studentAdded_table WHERE parentId = " + parentId);
-        studentList = repository.getStudentsInAttendance(query);
-        return studentList;
+        return repository.getStudentsInAttendance(parentId);
     }
 }

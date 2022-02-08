@@ -7,25 +7,25 @@ import androidx.room.Insert;
 import androidx.room.Query;
 import androidx.room.Update;
 
-import com.nicanoritorma.qrattendance.model.StudentModel;
+import com.nicanoritorma.qrattendance.model.QrModel;
 
 import java.util.List;
 
 @Dao
-public interface StudentDAO
+public interface QrDAO
 {
     @Insert
-    void insert(StudentModel student);
+    void insert(QrModel student);
 
     @Update
-    void update(StudentModel student);
+    void update(QrModel student);
 
     @Delete
-    void delete(StudentModel student);
+    void delete(QrModel student);
 
     @Query("DELETE FROM student_table")
     void deleteAllStudent();
 
     @Query("SELECT * FROM student_table ORDER BY id ASC")
-    LiveData<List<StudentModel>> getAllStudent();
+    LiveData<List<QrModel>> getAllStudent();
 }

@@ -3,19 +3,15 @@ package com.nicanoritorma.qrattendance.api;
 import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
-import android.content.Context;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
-import com.nicanoritorma.qrattendance.model.StudentModel;
 
 import org.json.JSONArray;
 import org.json.JSONException;

@@ -11,6 +11,7 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class NewAttendance extends BaseActivity {
 
@@ -33,15 +34,17 @@ public class NewAttendance extends BaseActivity {
     private void initUI()
     {
         ActionBar ab = getSupportActionBar();
-        ab.setTitle("Create Attendance");
+        if (ab != null) {
+            ab.setTitle("Create Attendance");
+        }
 
         btn_createAttendance.setOnClickListener(view -> AddAttendanceToDb(getData()[0], getData()[1], getData()[2], getData()[3]));
     }
 
     private String[] getData()
     {
-        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
-        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        SimpleDateFormat timeFormatter = new SimpleDateFormat("HH:mm", Locale.getDefault());
         Date mDate = new Date();
 
         String attendanceName = et_attendance.getText().toString().trim();
@@ -74,5 +77,17 @@ public class NewAttendance extends BaseActivity {
 //        AttendanceViewModel attendanceViewModel = new ViewModelProvider(this).get(AttendanceViewModel.class);
 //        attendanceViewModel.insert(attendanceName, details, date, time);
 //
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }
