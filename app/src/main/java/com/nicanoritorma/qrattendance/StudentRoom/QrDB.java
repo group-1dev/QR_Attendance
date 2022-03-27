@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.StudentRoom;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -12,6 +10,10 @@ import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
 import com.nicanoritorma.qrattendance.model.QrModel;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 @Database(entities = {QrModel.class}, version = 1)
 public abstract class QrDB extends RoomDatabase {

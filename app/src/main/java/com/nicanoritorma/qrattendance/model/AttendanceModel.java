@@ -1,10 +1,12 @@
 package com.nicanoritorma.qrattendance.model;
-/**
- * Created by Nicanor Itorma
- */
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 @Entity(tableName = "attendance_table")
 public class AttendanceModel {

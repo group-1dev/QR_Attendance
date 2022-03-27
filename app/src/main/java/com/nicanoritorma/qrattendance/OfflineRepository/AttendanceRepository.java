@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OfflineRepository;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.app.Application;
 import android.database.Cursor;
 import android.os.AsyncTask;
@@ -16,6 +14,10 @@ import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class AttendanceRepository {
 

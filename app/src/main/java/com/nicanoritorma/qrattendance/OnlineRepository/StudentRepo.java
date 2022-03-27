@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OnlineRepository;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.app.Application;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -14,6 +12,10 @@ import com.nicanoritorma.qrattendance.api.PutData;
 import com.nicanoritorma.qrattendance.model.QrModel;
 
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class StudentRepo extends BaseActivity {
 

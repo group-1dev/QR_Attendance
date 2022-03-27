@@ -1,7 +1,4 @@
 package com.nicanoritorma.qrattendance;
-/**
- * Created by Nicanor Itorma
- */
 
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.Observer;
@@ -33,6 +30,10 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * Created by Nicanor Itorma
+ */
+
 public class AttendanceList extends BaseActivity {
 
     private RecyclerView rv_attendanceList;
@@ -41,7 +42,6 @@ public class AttendanceList extends BaseActivity {
     private ActionMode actionMode;
     private final List<AttendanceModel> selectedAttendance = new ArrayList<>();
     private static Application application;
-    private String attendanceName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -205,8 +205,8 @@ public class AttendanceList extends BaseActivity {
                 case R.id.menu_saveToDevice:
                     int id = selectedAttendance.get(0).getId();
                     List<StudentInAttendanceModel> studentsList = getStudents(id);
-                    attendanceName = selectedAttendance.get(0).getAttendanceName();
-                    boolean isSuccess = XlsCreator.exportDataIntoWorkbook(getApplicationContext(), attendanceName, studentsList);
+                    String attendanceName = selectedAttendance.get(0).getAttendanceName();
+                    boolean isSuccess = XlsCreator.exportDataIntoWorkbook(attendanceName, studentsList);
                     if (isSuccess) {
                         Toast.makeText(getApplicationContext(), attendanceName + " is saved on Downloads/QR_Attendance/Attendance", Toast.LENGTH_SHORT).show();
                     }

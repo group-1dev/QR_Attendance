@@ -1,10 +1,8 @@
 package com.nicanoritorma.qrattendance.utils;
 
-import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
-import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 import org.apache.poi.hpsf.Constants;
@@ -30,42 +28,9 @@ public class XlsCreator {
     private static Cell cell;
     private static Sheet sheet;
     private static Workbook workbook;
-    private static CellStyle headerCellStyle;
     public static String TAG = "Xls Creator ";
 
-//    public static void createExcelWorkbook() {
-//        // New Workbook
-//        workbook = new HSSFWorkbook();
-//
-//        cell = null;
-//
-//        // Cell style for header row
-//        cellStyle = workbook.createCellStyle();
-//        cellStyle.setFillForegroundColor(HSSFColor.AQUA.index);
-//        cellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
-//        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);
-//
-//        // New Sheet
-//        sheet = null;
-//        sheet = workbook.createSheet(EXCEL_SHEET_NAME);
-//
-//        // Generate column headings
-//        Row row = sheet.createRow(0);
-//
-//        cell = row.createCell(0);
-//        cell.setCellValue("Name");
-//        cell.setCellStyle(cellStyle);
-//
-//        cell = row.createCell(1);
-//        cell.setCellValue("ID Number");
-//        cell.setCellStyle(cellStyle);
-//
-//        cell = row.createCell(2);
-//        cell.setCellValue("Time & Date");
-//        cell.setCellStyle(cellStyle);
-//    }
-
-    public static boolean exportDataIntoWorkbook(Context context, String fileName, List<StudentInAttendanceModel> dataList) {
+    public static boolean exportDataIntoWorkbook(String fileName, List<StudentInAttendanceModel> dataList) {
         boolean isWorkbookWrittenIntoStorage;
 
         // Check if available and not read only
@@ -88,7 +53,7 @@ public class XlsCreator {
 
         setHeaderRow();
         fillDataIntoExcel(dataList);
-        isWorkbookWrittenIntoStorage = storeExcelInStorage(context, fileName);
+        isWorkbookWrittenIntoStorage = storeExcelInStorage(fileName);
 
         return isWorkbookWrittenIntoStorage;
     }
@@ -117,7 +82,7 @@ public class XlsCreator {
      * Setup header cell style
      */
     private static void setHeaderCellStyle() {
-        headerCellStyle = workbook.createCellStyle();
+        CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFillForegroundColor(HSSFColor.AQUA.index);
         headerCellStyle.setFillPattern(HSSFCellStyle.SOLID_FOREGROUND);
         headerCellStyle.setAlignment(CellStyle.ALIGN_CENTER);
@@ -149,7 +114,6 @@ public class XlsCreator {
 
     /**
      * Fills Data into Excel Sheet
-     * <p>
      * NOTE: Set row index as i+1 since 0th index belongs to header row
      *
      * @param dataList - List containing data to be filled into excel
@@ -174,11 +138,10 @@ public class XlsCreator {
     /**
      * Store Excel Workbook in external storage
      *
-     * @param context  - application context
      * @param fileName - name of workbook which will be stored in device
      * @return boolean - returns state whether workbook is written into storage or not
      */
-    private static boolean storeExcelInStorage(Context context, String fileName) {
+    private static boolean storeExcelInStorage(String fileName) {
         boolean isSuccess;
 
         String attendanceDir = Environment.getExternalStoragePublicDirectory(

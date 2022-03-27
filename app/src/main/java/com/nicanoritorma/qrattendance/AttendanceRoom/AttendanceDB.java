@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.AttendanceRoom;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.content.Context;
 import android.os.AsyncTask;
 
@@ -15,6 +13,10 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 @Database(entities = {AttendanceModel.class}, version = 1)
 public abstract class AttendanceDB extends RoomDatabase {

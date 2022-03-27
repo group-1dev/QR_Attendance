@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.utils;
-/**
- * Created by Nicanor Itorma
- */
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -28,6 +26,10 @@ import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class QrScanner extends Fragment {
 

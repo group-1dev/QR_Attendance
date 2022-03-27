@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.api;
-/**
- * Created by Nicanor Itorma
- */
+
 import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
@@ -21,6 +19,10 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class GetAttendance {
 

@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance;
-/**
- * Created by Nicanor Itorma
- */
+
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 import android.animation.LayoutTransition;
 import android.content.Intent;
@@ -15,6 +13,10 @@ import android.widget.GridLayout;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class MainActivity extends BaseActivity {
 

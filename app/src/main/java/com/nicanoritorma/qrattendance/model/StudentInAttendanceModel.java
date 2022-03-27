@@ -1,9 +1,11 @@
 package com.nicanoritorma.qrattendance.model;
+
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 /**
  * Created by Nicanor Itorma
  */
-import androidx.room.Entity;
-import androidx.room.PrimaryKey;
 
 @Entity(tableName = "studentAdded_table")
 public class StudentInAttendanceModel {

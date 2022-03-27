@@ -1,7 +1,4 @@
 package com.nicanoritorma.qrattendance.ClickedAttendanceRoom;
-/**
- * Created by Nicanor Itorma
- */
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -13,6 +10,10 @@ import androidx.room.Update;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 @Dao
 public interface StudentInAttendanceDAO {

@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.graphics.Bitmap;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
-import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -38,6 +35,10 @@ import java.io.FileOutputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class GeneratedQr extends BaseActivity {
 
@@ -71,40 +72,31 @@ public class GeneratedQr extends BaseActivity {
 
         //offline db
         QrViewModel qrViewModel = new QrViewModel(getApplication());
-        qrViewModel.getAllQr().observe(this, new Observer<List<QrModel>>() {
-            @Override
-            public void onChanged(List<QrModel> qrModels) {
-                if (qrModels.size() == 0)
-                {
-                    tv_empty.setVisibility(View.VISIBLE);
-                }
-
-                qrAdapter.setList(qrModels);
-
-                RecyclerViewItemClickSupport.addTo(rv_generatedQr).setOnItemClickListener(new RecyclerViewItemClickSupport.OnItemClickListener() {
-                    @Override
-                    public void onItemClicked(RecyclerView recyclerView, int position, View v) {
-                        if (actionMode == null) {
-                            return;
-                        }
-                        //if in CAB mode
-                        toggleListViewItem(v, position);
-                        setCABTitle();
-                    }
-                }).setOnItemLongClickListener(new RecyclerViewItemClickSupport.OnItemLongClickListener() {
-                    @Override
-                    public boolean onItemLongClicked(RecyclerView recyclerView, int position, View v) {
-                        if (actionMode != null) {
-                            return false;
-                        }
-                        // Start the CAB using the ActionMode.Callback defined below
-                        GeneratedQr.this.startActionMode(new ModeCallback());
-                        toggleListViewItem(v, position);
-                        setCABTitle();
-                        return true;
-                    }
-                });
+        qrViewModel.getAllQr().observe(this, qrModels -> {
+            if (qrModels.size() == 0)
+            {
+                tv_empty.setVisibility(View.VISIBLE);
             }
+
+            qrAdapter.setList(qrModels);
+
+            RecyclerViewItemClickSupport.addTo(rv_generatedQr).setOnItemClickListener((recyclerView, position, v) -> {
+                if (actionMode == null) {
+                    return;
+                }
+                //if in CAB mode
+                toggleListViewItem(v, position);
+                setCABTitle();
+            }).setOnItemLongClickListener((recyclerView, position, v) -> {
+                if (actionMode != null) {
+                    return false;
+                }
+                // Start the CAB using the ActionMode.Callback defined below
+                GeneratedQr.this.startActionMode(new ModeCallback());
+                toggleListViewItem(v, position);
+                setCABTitle();
+                return true;
+            });
         });
     }
 
@@ -243,6 +235,11 @@ public class GeneratedQr extends BaseActivity {
         return true;
     }
 
+    /**
+     * function to save qr code to local storage with id number as filename
+     * @param idNum - id number of the student
+     * @param qrCode - the generated qr code
+     */
     private void saveQrToLocal(String idNum, String qrCode) {
         byte[] data = Base64.decode(qrCode, Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);

@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.utils;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -14,14 +12,12 @@ import static androidx.core.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_ST
 import static androidx.core.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_ENABLED;
 import static androidx.core.net.ConnectivityManagerCompat.RESTRICT_BACKGROUND_STATUS_WHITELISTED;
 
+/**
+ * Created by Nicanor Itorma
+ */
+
 public class Connectivity {
 
-  /**
-   * Get the network info
-   *
-   * @param context
-   * @return
-   */
   public static NetworkInfo getNetworkInfo(Context context) {
     ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
     return cm.getActiveNetworkInfo();

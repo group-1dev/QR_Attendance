@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance;
-/**
- * Created by Nicanor Itorma
- */
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.fragment.app.DialogFragment;
@@ -40,6 +38,10 @@ import com.nicanoritorma.qrattendance.utils.RecyclerViewItemClickSupport;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class ClickedAttendance extends BaseActivity {
 
@@ -103,31 +105,28 @@ public class ClickedAttendance extends BaseActivity {
         rv_studentsAdded.setAdapter(studentInAttendanceAdapter);
 
         StudentInAttendanceVM studentVM = new StudentInAttendanceVM(getApplication());
-        studentVM.getStudentList(intent.getIntExtra("ITEM_ID", 0)).observe(this, new Observer<List<StudentInAttendanceModel>>() {
-            @Override
-            public void onChanged(List<StudentInAttendanceModel> studentInAttendanceModels) {
-                studentInAttendanceAdapter.setList(studentInAttendanceModels);
+        studentVM.getStudentList(intent.getIntExtra("ITEM_ID", 0)).observe(this, studentInAttendanceModels -> {
+            studentInAttendanceAdapter.setList(studentInAttendanceModels);
 
-                RecyclerViewItemClickSupport.addTo(rv_studentsAdded)
-                        .setOnItemClickListener((recyclerView, position, view) -> {
-                            if (actionMode == null) {
-                                return;
-                            }
-                            // If in CAB mode
-                            toggleListViewItem(view, position);
-                            setCABTitle();
-                        }).setOnItemLongClickListener((recyclerView, position, view) -> {
-                            if (actionMode != null) {
-                                return false;
-                            }
-                    // Start the CAB using the ActionMode.Callback defined below
-                    ClickedAttendance.this.startActionMode(new ModeCallback());
-                    toggleListViewItem(view, position);
-                    setCABTitle();
-                    return true;
-                });
+            RecyclerViewItemClickSupport.addTo(rv_studentsAdded)
+                    .setOnItemClickListener((recyclerView, position, view) -> {
+                        if (actionMode == null) {
+                            return;
+                        }
+                        // If in CAB mode
+                        toggleListViewItem(view, position);
+                        setCABTitle();
+                    }).setOnItemLongClickListener((recyclerView, position, view) -> {
+                        if (actionMode != null) {
+                            return false;
+                        }
+                // Start the CAB using the ActionMode.Callback defined below
+                ClickedAttendance.this.startActionMode(new ModeCallback());
+                toggleListViewItem(view, position);
+                setCABTitle();
+                return true;
+            });
 
-            }
         });
     }
 

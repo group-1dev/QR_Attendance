@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OfflineViewModels;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.app.Application;
 import android.database.Cursor;
 
@@ -17,6 +15,10 @@ import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class StudentInAttendanceVM extends AndroidViewModel {
 

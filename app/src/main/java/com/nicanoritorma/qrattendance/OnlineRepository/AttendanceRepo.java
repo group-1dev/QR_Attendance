@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OnlineRepository;
-/**
- * Created by Nicanor Itorma
- */
+
 import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 import static com.nicanoritorma.qrattendance.BaseActivity.showProgressBar;
 
@@ -16,6 +14,10 @@ import com.nicanoritorma.qrattendance.api.PutData;
 import com.nicanoritorma.qrattendance.model.AttendanceModel;
 
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class AttendanceRepo {
 

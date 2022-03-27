@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +12,10 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class NewAttendance extends BaseActivity {
 

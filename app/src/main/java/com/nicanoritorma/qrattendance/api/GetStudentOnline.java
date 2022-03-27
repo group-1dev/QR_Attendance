@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.api;
-/**
- * Created by Nicanor Itorma
- */
+
 import static com.nicanoritorma.qrattendance.BaseActivity.getDbUrl;
 
 import android.app.Application;
@@ -22,10 +20,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Created by Nicanor Itorma
+ */
+
 public class GetStudentOnline {
 
-    private MutableLiveData<List<QrModel>> studentList;
-    private RequestQueueSingleton requestQueueSingleton;
+    private final MutableLiveData<List<QrModel>> studentList;
+    private final RequestQueueSingleton requestQueueSingleton;
 
     public GetStudentOnline(Application application) {
         studentList = new MutableLiveData<>();

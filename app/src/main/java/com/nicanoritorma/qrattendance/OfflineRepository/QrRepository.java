@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OfflineRepository;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
@@ -13,6 +11,10 @@ import com.nicanoritorma.qrattendance.StudentRoom.QrDB;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class QrRepository {
 

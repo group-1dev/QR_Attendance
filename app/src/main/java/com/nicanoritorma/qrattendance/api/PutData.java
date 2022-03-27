@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.api;
-/**
- * Created by Nicanor Itorma
- */
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -12,6 +10,10 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class PutData extends Thread {
     private String url, method;

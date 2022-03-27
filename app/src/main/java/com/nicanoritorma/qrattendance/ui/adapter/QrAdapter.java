@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.ui.adapter;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.graphics.BitmapFactory;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -22,6 +20,10 @@ import com.nicanoritorma.qrattendance.utils.EncryptorAndDecryptor;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class QrAdapter extends RecyclerView.Adapter<QrAdapter.QrAdapterVH> {
 

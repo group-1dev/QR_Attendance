@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.utils;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.util.Log;
 import android.widget.Toast;
 
@@ -13,6 +11,10 @@ import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class EncryptorAndDecryptor {
 

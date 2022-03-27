@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OfflineViewModels;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -12,6 +10,10 @@ import com.nicanoritorma.qrattendance.model.QrModel;
 import com.nicanoritorma.qrattendance.OfflineRepository.QrRepository;
 
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class QrViewModel extends AndroidViewModel {
 

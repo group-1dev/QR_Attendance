@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.OnlineViewModels;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -12,6 +10,10 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.OnlineRepository.AttendanceRepo;
 
 import java.util.List;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class AttendanceViewModel extends AndroidViewModel {
 

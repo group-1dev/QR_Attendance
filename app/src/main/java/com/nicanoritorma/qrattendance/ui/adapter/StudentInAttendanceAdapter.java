@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance.ui.adapter;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,8 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Adapter for Recyclerview of ClickedAttendance Activity
+ * Created by Nicanor Itorma
  */
+
+//Adapter for Recyclerview of ClickedAttendance Activity
 public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAttendanceAdapter.StudentInAttendanceVH> {
 
     private List<StudentInAttendanceModel> studentsAdded = new ArrayList<>();

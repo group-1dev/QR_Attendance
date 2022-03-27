@@ -1,7 +1,5 @@
 package com.nicanoritorma.qrattendance;
-/**
- * Created by Nicanor Itorma
- */
+
 import androidx.appcompat.app.ActionBar;
 
 import android.graphics.Bitmap;
@@ -22,6 +20,10 @@ import com.nicanoritorma.qrattendance.utils.EncryptorAndDecryptor;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class CreateQr extends BaseActivity {
 
@@ -46,22 +48,22 @@ public class CreateQr extends BaseActivity {
 
     private void initUI() {
         ActionBar ab = getSupportActionBar();
-        ab.setTitle("Create QR Code");
-        btn_generate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (getData()[0].isEmpty())
-                {
-                    et_fullname.setError(BLANK_FIELD_ERROR);
-                }
-                else if (getData()[1].isEmpty())
-                {
-                    et_idNum.setError(BLANK_FIELD_ERROR);
-                }
-                else
-                {
-                    generateQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1]);
-                }
+        if (ab != null)
+        {
+            ab.setTitle("Create QR Code");
+        }
+        btn_generate.setOnClickListener(view -> {
+            if (getData()[0].isEmpty())
+            {
+                et_fullname.setError(BLANK_FIELD_ERROR);
+            }
+            else if (getData()[1].isEmpty())
+            {
+                et_idNum.setError(BLANK_FIELD_ERROR);
+            }
+            else
+            {
+                generateQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1]);
             }
         });
         btn_saveQr.setOnClickListener(view -> {

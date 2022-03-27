@@ -1,11 +1,13 @@
 package com.nicanoritorma.qrattendance.api;
-/**
- * Created by Nicanor Itorma
- */
+
 import android.content.Context;
 
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
+
+/**
+ * Created by Nicanor Itorma
+ */
 
 public class RequestQueueSingleton {
     private static RequestQueueSingleton instance;
