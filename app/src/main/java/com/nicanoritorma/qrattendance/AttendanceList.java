@@ -2,6 +2,7 @@ package com.nicanoritorma.qrattendance;
 /**
  * Created by Nicanor Itorma
  */
+
 import androidx.appcompat.app.ActionBar;
 import androidx.lifecycle.Observer;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,13 +11,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.nicanoritorma.qrattendance.OfflineViewModels.AttendanceVM;
 import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
@@ -24,20 +26,20 @@ import com.nicanoritorma.qrattendance.model.AttendanceModel;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 import com.nicanoritorma.qrattendance.ui.adapter.AttendanceAdapter;
 import com.nicanoritorma.qrattendance.utils.RecyclerViewItemClickSupport;
+import com.nicanoritorma.qrattendance.utils.XlsCreator;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class AttendanceList extends BaseActivity {
 
     private RecyclerView rv_attendanceList;
+    private TextView tv_empty;
     private AttendanceAdapter attendanceAdapter;
     private ActionMode actionMode;
     private final List<AttendanceModel> selectedAttendance = new ArrayList<>();
-    private final ArrayList<String> itemInAttendance = new ArrayList<>();
     private static Application application;
     private String attendanceName;
 
@@ -48,6 +50,7 @@ public class AttendanceList extends BaseActivity {
 
         AttendanceList.application = getApplication();
         rv_attendanceList = findViewById(R.id.rv_attendanceList);
+        tv_empty = findViewById(R.id.tv_emptyAttendance);
 
         initUI();
     }
@@ -68,6 +71,11 @@ public class AttendanceList extends BaseActivity {
         attendanceVM.getAllAttendance().observe(this, new Observer<List<AttendanceModel>>() {
             @Override
             public void onChanged(List<AttendanceModel> attendanceModels) {
+                if (attendanceModels.size() == 0)
+                {
+                    tv_empty.setVisibility(View.VISIBLE);
+                }
+
                 attendanceAdapter.setList(attendanceModels);
 
                 RecyclerViewItemClickSupport.addTo(rv_attendanceList).setOnItemClickListener(new RecyclerViewItemClickSupport.OnItemClickListener() {
@@ -196,8 +204,12 @@ public class AttendanceList extends BaseActivity {
                     return true;
                 case R.id.menu_saveToDevice:
                     int id = selectedAttendance.get(0).getId();
+                    List<StudentInAttendanceModel> studentsList = getStudents(id);
                     attendanceName = selectedAttendance.get(0).getAttendanceName();
-                    prepareData(id);
+                    boolean isSuccess = XlsCreator.exportDataIntoWorkbook(getApplicationContext(), attendanceName, studentsList);
+                    if (isSuccess) {
+                        Toast.makeText(getApplicationContext(), attendanceName + " is saved on Downloads/QR_Attendance/Attendance", Toast.LENGTH_SHORT).show();
+                    }
                     finishActionMode();
                     return true;
             }
@@ -214,60 +226,18 @@ public class AttendanceList extends BaseActivity {
         }
     }
 
-    private void prepareData(int parentId) {
+    private List<StudentInAttendanceModel> getStudents(int id) {
         StudentInAttendanceVM student = new StudentInAttendanceVM(application);
-        student.getStudentList(parentId).observe(this, new Observer<List<StudentInAttendanceModel>>() {
+        List<StudentInAttendanceModel> studentList = new ArrayList<>();
+
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(new Runnable() {
             @Override
-            public void onChanged(List<StudentInAttendanceModel> studentInAttendanceModels) {
-                for (StudentInAttendanceModel student : studentInAttendanceModels) {
-                    itemInAttendance.add(student.getFullname() + ";" + student.getIdNum());
-                }
+            public void run() {
+                studentList.addAll(student.getStudentListInAttendance(id));
             }
         });
-        try {
-            exportDataToCSV(attendanceName);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-        Attendance will be saved to device storage
-
-        TODO: This has errors, i cant fix
-            - The file is created but no content
-    */
-    private void exportDataToCSV(String attendanceName) throws IOException {
-        String attendanceDir = Environment.getExternalStoragePublicDirectory(
-                Environment.DIRECTORY_DOWNLOADS).toString() + File.separator + "QR_Attendance/Attendance";
-        File file = new File(attendanceDir);
-        if (!file.exists())
-            file.mkdirs();
-
-        File attendance = new File(attendanceDir, attendanceName + ".csv");
-        FileWriter writer = new FileWriter(attendance);
-        for (int i = 0; i < itemInAttendance.size(); i++) {
-            String currentLine = itemInAttendance.get(i);
-            String[] cells = currentLine.split(";");
-            writer.write(toCSV(cells)+"\n");
-        }
-        writer.flush();
-        writer.close();
-    }
-
-
-    public static String toCSV(String[] array) {
-        String result = "";
-        if (array.length > 0) {
-            StringBuilder sb = new StringBuilder();
-            for (String s : array) {
-                sb.append(s.trim()).append(",");
-            }
-            result = sb.deleteCharAt(sb.length() - 1).toString();
-        }
-        return result;
+        return studentList;
     }
 
     private void deleteItem(AttendanceModel attendance) {

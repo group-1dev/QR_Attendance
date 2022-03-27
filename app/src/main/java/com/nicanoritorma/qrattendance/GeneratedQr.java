@@ -18,6 +18,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -41,6 +42,7 @@ import java.util.List;
 public class GeneratedQr extends BaseActivity {
 
     private RecyclerView rv_generatedQr;
+    private TextView tv_empty;
     private QrAdapter qrAdapter;
     private GeneratedQrViewModel qrViewModel;
     private final List<QrModel> selectedItem = new ArrayList<>();
@@ -52,6 +54,7 @@ public class GeneratedQr extends BaseActivity {
         setContentView(R.layout.activity_generated_qr);
 
         rv_generatedQr = findViewById(R.id.rv_generatedQr);
+        tv_empty = findViewById(R.id.tv_emptyQr);
         initUI();
     }
 
@@ -71,6 +74,11 @@ public class GeneratedQr extends BaseActivity {
         qrViewModel.getAllQr().observe(this, new Observer<List<QrModel>>() {
             @Override
             public void onChanged(List<QrModel> qrModels) {
+                if (qrModels.size() == 0)
+                {
+                    tv_empty.setVisibility(View.VISIBLE);
+                }
+
                 qrAdapter.setList(qrModels);
 
                 RecyclerViewItemClickSupport.addTo(rv_generatedQr).setOnItemClickListener(new RecyclerViewItemClickSupport.OnItemClickListener() {

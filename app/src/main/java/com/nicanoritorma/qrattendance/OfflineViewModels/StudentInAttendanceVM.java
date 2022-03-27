@@ -49,4 +49,9 @@ public class StudentInAttendanceVM extends AndroidViewModel {
     {
         return repository.getStudentsInAttendance(parentId);
     }
+
+    public List<StudentInAttendanceModel> getStudentListInAttendance(int parentId)
+    {
+        return repository.getStudentListInAttendance(parentId);
+    }
 }

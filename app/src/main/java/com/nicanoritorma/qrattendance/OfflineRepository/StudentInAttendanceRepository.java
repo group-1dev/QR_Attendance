@@ -57,6 +57,11 @@ public class StudentInAttendanceRepository {
         return studentInAttendanceDAO.getStudents(id);
     }
 
+    public List<StudentInAttendanceModel> getStudentListInAttendance(int id)
+    {
+        return studentInAttendanceDAO.getStudentList(id);
+    }
+
     private void Insert(StudentInAttendanceDAO studentDAO, StudentInAttendanceModel student) {
         Executor executor = Executors.newSingleThreadExecutor();
         executor.execute(new Runnable() {

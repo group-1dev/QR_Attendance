@@ -49,13 +49,14 @@ public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAt
 
     public static class StudentInAttendanceVH extends RecyclerView.ViewHolder
     {
-        TextView tv_heading1, tv_heading2;
+        TextView tv_heading1, tv_heading2, tv_heading3;
         RelativeLayout item;
 
         public StudentInAttendanceVH(@NonNull View itemView) {
             super(itemView);
             tv_heading1 = itemView.findViewById(R.id.tv_heading1);
             tv_heading2 = itemView.findViewById(R.id.tv_heading2);
+            tv_heading3 = itemView.findViewById(R.id.tv_heading3);
             item = itemView.findViewById(R.id.item_relative_layout);
         }
     }
@@ -85,6 +86,11 @@ public class StudentInAttendanceAdapter extends RecyclerView.Adapter<StudentInAt
         {
             holder.tv_heading2.setVisibility(View.VISIBLE);
             holder.tv_heading2.setText(student.getIdNum());
+        }
+        if (student.getTimeAndDate().length() > 0)
+        {
+            holder.tv_heading3.setVisibility(View.VISIBLE);
+            holder.tv_heading3.setText(student.getTimeAndDate());
         }
         manageSelectionColor(position, holder);
     }

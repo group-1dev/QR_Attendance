@@ -26,6 +26,9 @@ import com.nicanoritorma.qrattendance.OfflineViewModels.StudentInAttendanceVM;
 import com.nicanoritorma.qrattendance.R;
 import com.nicanoritorma.qrattendance.model.StudentInAttendanceModel;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 public class QrScanner extends Fragment {
 
     private static final int REQUEST_PERMISSION_CAMERA = 100;
@@ -55,8 +58,14 @@ public class QrScanner extends Fragment {
                 String[] arrOfStr = decryptedData != null ? decryptedData.split("&") : resultText.split("&");
 
                 StudentInAttendanceVM student = new StudentInAttendanceVM(activity.getApplication());
+
+                //get current time and date
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+                Date date = new Date();
+                String timeAndDate = formatter.format(date);
+
                 try {
-                    student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], EXTRA_ID));
+                    student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], timeAndDate, EXTRA_ID));
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

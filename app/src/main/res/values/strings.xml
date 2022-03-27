@@ -16,5 +16,7 @@
     <string name="department">Department</string>
     <string name="generate_qr">GENERATE QR</string>
     <string name="save_qr_code">SAVE QR CODE</string>
+    <string name="no_attendance_data">No attendance data</string>
+    <string name="no_qr_data_available">No QR data available</string>
 
 </resources>

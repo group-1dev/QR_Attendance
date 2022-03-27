@@ -32,4 +32,7 @@ public interface StudentInAttendanceDAO {
     @Query("SELECT * FROM studentAdded_table WHERE parentId=:id")
     LiveData<List<StudentInAttendanceModel>> getStudents(int id);
 
+    @Query("SELECT * FROM studentAdded_table WHERE parentId=:id")
+    List<StudentInAttendanceModel> getStudentList(int id);
+
 }
