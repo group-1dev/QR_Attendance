@@ -203,12 +203,17 @@ public class AttendanceList extends BaseActivity {
                     finishActionMode();
                     return true;
                 case R.id.menu_saveToDevice:
-                    int id = selectedAttendance.get(0).getId();
-                    List<StudentInAttendanceModel> studentsList = getStudents(id);
-                    String attendanceName = selectedAttendance.get(0).getAttendanceName();
-                    boolean isSuccess = XlsCreator.exportDataIntoWorkbook(attendanceName, studentsList);
-                    if (isSuccess) {
-                        Toast.makeText(getApplicationContext(), attendanceName + " is saved on Downloads/QR_Attendance/Attendance", Toast.LENGTH_SHORT).show();
+                    try {
+                        int id = selectedAttendance.get(0).getId();
+                        List<StudentInAttendanceModel> studentsList = getStudents(id);
+                        String attendanceName = selectedAttendance.get(0).getAttendanceName();
+                        boolean isSuccess = XlsCreator.exportDataIntoWorkbook(attendanceName, studentsList);
+                        if (isSuccess) {
+                            Toast.makeText(getApplicationContext(), attendanceName + " is saved on Downloads/QR_Attendance/Attendance", Toast.LENGTH_SHORT).show();
+                        }
+                    }catch (Exception e)
+                    {
+                        Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_SHORT).show();
                     }
                     finishActionMode();
                     return true;

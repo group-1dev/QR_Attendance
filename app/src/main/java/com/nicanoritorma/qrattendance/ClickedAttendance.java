@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -60,6 +61,7 @@ public class ClickedAttendance extends BaseActivity {
     private static ActionBar ab;
     private final List<StudentInAttendanceModel> selectedStudent = new ArrayList<>();
     private ActionMode actionMode;
+    private TextView tv_empty;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,7 @@ public class ClickedAttendance extends BaseActivity {
 
         rv_studentsAdded = findViewById(R.id.rv_studentsInAttendance);
         fab_add = findViewById(R.id.fab_addStudent);
+        tv_empty = findViewById(R.id.tv_emptyStudent);
 
         intent = getIntent();
         itemId = intent.getIntExtra("ITEM_ID", 0);
@@ -78,7 +81,7 @@ public class ClickedAttendance extends BaseActivity {
 
         fab_add.setOnClickListener(view -> {
             fab_add.setVisibility(View.GONE);
-
+            tv_empty.setVisibility(View.GONE);
             Bundle bundle = new Bundle();
             bundle.putInt("EXTRA_ID", itemId);
             FragmentTransaction ft = mFragmentManager.beginTransaction();
@@ -106,6 +109,10 @@ public class ClickedAttendance extends BaseActivity {
 
         StudentInAttendanceVM studentVM = new StudentInAttendanceVM(getApplication());
         studentVM.getStudentList(intent.getIntExtra("ITEM_ID", 0)).observe(this, studentInAttendanceModels -> {
+            if (studentInAttendanceModels.size() == 0)
+            {
+                tv_empty.setVisibility(View.VISIBLE);
+            }
             studentInAttendanceAdapter.setList(studentInAttendanceModels);
 
             RecyclerViewItemClickSupport.addTo(rv_studentsAdded)

@@ -18,5 +18,6 @@
     <string name="save_qr_code">SAVE QR CODE</string>
     <string name="no_attendance_data">No attendance data</string>
     <string name="no_qr_data_available">No QR data available</string>
+    <string name="no_student_added">No student added</string>
 
 </resources>

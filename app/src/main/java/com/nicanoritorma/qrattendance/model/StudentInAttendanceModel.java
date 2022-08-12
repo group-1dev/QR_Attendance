@@ -15,21 +15,24 @@ public class StudentInAttendanceModel {
 
     private String fullname;
     private String idNum;
+    private String dept;
     private int parentId;
     private String timeAndDate;
 
     public StudentInAttendanceModel() {}
 
-    public StudentInAttendanceModel(String fullname, String idNum, String timeAndDate, int parentId) {
+    public StudentInAttendanceModel(String fullname, String idNum, String dept, String timeAndDate, int parentId) {
         this.fullname = fullname;
         this.idNum = idNum;
         this.parentId = parentId;
+        this.dept = dept;
         this.timeAndDate = timeAndDate;
     }
 
-    public StudentInAttendanceModel(String fullname, String idNum, String timeAndDate) {
+    public StudentInAttendanceModel(String fullname, String idNum, String dept, String timeAndDate) {
         this.fullname = fullname;
         this.idNum = idNum;
+        this.dept = dept;
         this.timeAndDate = timeAndDate;
     }
 
@@ -71,5 +74,13 @@ public class StudentInAttendanceModel {
 
     public void setTimeAndDate(String timeAndDate) {
         this.timeAndDate = timeAndDate;
+    }
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
     }
 }

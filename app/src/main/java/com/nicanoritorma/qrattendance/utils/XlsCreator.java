@@ -108,6 +108,10 @@ public class XlsCreator {
         cell.setCellStyle(cellStyle);
 
         cell = headerRow.createCell(2);
+        cell.setCellValue("Department");
+        cell.setCellStyle(cellStyle);
+
+        cell = headerRow.createCell(3);
         cell.setCellValue("Time and Date");
         cell.setCellStyle(cellStyle);
     }
@@ -131,6 +135,9 @@ public class XlsCreator {
             cell.setCellValue(dataList.get(i).getIdNum());
 
             cell = rowData.createCell(2);
+            cell.setCellValue(dataList.get(i).getDept());
+
+            cell = rowData.createCell(3);
             cell.setCellValue(dataList.get(i).getTimeAndDate());
         }
     }

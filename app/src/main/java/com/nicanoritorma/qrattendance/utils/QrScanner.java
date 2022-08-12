@@ -50,6 +50,7 @@ public class QrScanner extends Fragment {
         View view = inflater.inflate(R.layout.activity_qr_scanner, container, false);
         CodeScannerView scannerView = view.findViewById(R.id.scannerView);
         mCodeScanner = new CodeScanner(activity, scannerView);
+
         mCodeScanner.setDecodeCallback(new DecodeCallback() {
             @Override
             public void onDecoded(@NonNull final Result result) {
@@ -67,7 +68,7 @@ public class QrScanner extends Fragment {
                 String timeAndDate = formatter.format(date);
 
                 try {
-                    student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], timeAndDate, EXTRA_ID));
+                    student.insert(new StudentInAttendanceModel(arrOfStr[0], arrOfStr[1], arrOfStr[2], timeAndDate, EXTRA_ID));
                     activity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

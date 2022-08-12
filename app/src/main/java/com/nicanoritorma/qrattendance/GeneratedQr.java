@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -246,15 +247,15 @@ public class GeneratedQr extends BaseActivity {
 
         OutputStream fos;
         try {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                ContentResolver resolver = getApplicationContext().getContentResolver();
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, idNum);
-                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
-                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "Pictures/" + "QR_Attendance/QR_Codes");
-                Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
-                fos = resolver.openOutputStream(imageUri);
-            } else {
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//                ContentResolver resolver = getApplicationContext().getContentResolver();
+//                ContentValues contentValues = new ContentValues();
+//                contentValues.put(MediaStore.MediaColumns.DISPLAY_NAME, idNum);
+//                contentValues.put(MediaStore.MediaColumns.MIME_TYPE, "image/png");
+//                contentValues.put(MediaStore.MediaColumns.RELATIVE_PATH, "Downloads/" + "QR_Attendance/QR_Codes");
+//                Uri imageUri = resolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues);
+//                fos = resolver.openOutputStream(imageUri);
+//            } else {
                 String imagesDir = Environment.getExternalStoragePublicDirectory(
                         Environment.DIRECTORY_PICTURES).toString() + File.separator + "QR_Attendance";
 
@@ -266,7 +267,7 @@ public class GeneratedQr extends BaseActivity {
 
                 File image = new File(imagesDir, idNum + ".png");
                 fos = new FileOutputStream(image);
-            }
+//            }
             bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
             fos.flush();
             fos.close();

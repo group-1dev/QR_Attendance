@@ -63,9 +63,11 @@ public class CreateQr extends BaseActivity {
             }
             else
             {
-                generateQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1]);
+                generateQr(CreateQr.this.getData()[0], CreateQr.this.getData()[1], CreateQr.this.getData()[2]);
             }
         });
+
+        //button handler to save to local storage
         btn_saveQr.setOnClickListener(view -> {
             iv_qr.setDrawingCacheEnabled(true);
             Bitmap bitmap = iv_qr.getDrawingCache();
@@ -85,14 +87,14 @@ public class CreateQr extends BaseActivity {
 
 
     //generate qr code
-    private void generateQr(String fullname, String idNum) {
+    private void generateQr(String fullname, String idNum, String dept) {
         BitMatrix bitMatrix;
         Bitmap bitmap;
-        String encryptedData = EncryptorAndDecryptor.encrypt(fullname+"&"+idNum);
+        String encryptedData = EncryptorAndDecryptor.encrypt(fullname+"&"+idNum+"&"+dept);
         QRCodeWriter qrCodeWriter = new QRCodeWriter();
 
         try {
-            bitMatrix = qrCodeWriter.encode(encryptedData != null ? encryptedData : fullname+"&"+idNum, BarcodeFormat.QR_CODE, 250, 250);
+            bitMatrix = qrCodeWriter.encode(encryptedData != null ? encryptedData : fullname+"&"+idNum+"&"+dept, BarcodeFormat.QR_CODE, 250, 250);
             bitmap = Bitmap.createBitmap(250, 250, Bitmap.Config.RGB_565);
 
             for (int x = 0; x < 250; x++) {
